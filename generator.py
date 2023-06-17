@@ -6,7 +6,7 @@ import os
 import numpy as np
 import networkx as nx
 
-from utils import create_folder
+from utils.ioutils import create_folder
 
 
 def generate_dataset(seed: int, keywords_per_vertex_num: int, all_keyword_num: int, node_num: int, neighbor_num: int, add_edge_probability: float):
@@ -53,6 +53,7 @@ def generate_dataset(seed: int, keywords_per_vertex_num: int, all_keyword_num: i
         for keyword in keywords:
             label_counter[keyword] += 1
         target_graph.nodes[i]['keywords'] = keywords
+        print(target_graph.nodes[i])
 
     # print([{keywords_set[i]: label_counter[i]} for i in range(all_keyword_num)])
 
