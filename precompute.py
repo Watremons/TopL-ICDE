@@ -1,6 +1,5 @@
 import math
 
-from BitVector import BitVector
 import networkx as nx
 
 from utils.graphutils import compute_support, compute_influential_score
@@ -18,17 +17,20 @@ ALL_KEYWORD_NUM = 10000
 def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
     # 1. keyword hash for each vertex
     for i in range(data_graph.number_of_nodes()):
-        bv = BitVector(size=ALL_KEYWORD_NUM)
+        # bv = BitVector(size=ALL_KEYWORD_NUM)
+        bv = 0
         # 1.1 hash keywords to BV for each vertex
         for keyword in data_graph.nodes[i]["keywords"]:
-            bv[keyword] = 1
+            bv = bv & (1 << keyword)
         # 1.2 save BV into R
         data_graph.nodes[i]["R"] = [{
-            "BV_r": BitVector(size=ALL_KEYWORD_NUM),
+            "BV_r": 0,
             "ub_sup_r": 0,
             "Inf_ub": dict(zip(PRE_THETA_LIST, [0 for _ in PRE_THETA_LIST]))
         } for _ in range(R_MAX)]
+        # print("Start to save BV as integer")
         data_graph.nodes[i]["BV"] = bv
+        # print("End to save BV as integer")
 
         # 2. compute the edge support in each hop(v_i, r_max)
         # 2.1. compute hop(v_i, r_max)
@@ -48,7 +50,7 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
             # 3.0. compute hop(v_i, r)
             hop_v_r = nx.ego_graph(G=data_graph, n=i, radius=r+1, center=True)
             # 3.1. compute bv_r = all BV on vertices in hop(v_i, r)
-            for node_j in hop_v_r.nodes:
+            for node_j in hop_v_r.nodes:  # int bit-or int
                 data_graph.nodes[i]["R"][r]["BV_r"] = data_graph.nodes[i]["R"][r]["BV_r"] | hop_v_r.nodes[node_j]["BV"]
             # 3.2. compute ub_sup_r = max support of all edges in hop(v_i, r)
             for (u, v) in hop_v_r.edges:
