@@ -1,18 +1,21 @@
-import os
 import math
+
 from BitVector import BitVector
 import networkx as nx
 
 from utils.graphutils import compute_support, compute_influential_score
 from offline.partitioning import graph_partitioning
 
-R_MAX = os.getenv('R_MAX')
-ALL_KEYWORD_NUM = os.getenv('ALL_KEYWORD_NUM')
-PRE_THETA_LIST = os.getenv('PRE_THETA_LIST')
-BLOCK_SIZE = os.getenv('BLOCK_SIZE')
+SEED = 2023
+R_MAX = 3
+# PRE_THETA_LIST = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+PRE_THETA_LIST = [0.2]
+BLOCK_SIZE = 4096
+
+ALL_KEYWORD_NUM = 10000
 
 
-def execute_offline(data_graph: nx.Graph) -> (list, nx.Graph):
+def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
     # 1. keyword hash for each vertex
     for i in range(data_graph.number_of_nodes()):
         bv = BitVector(size=ALL_KEYWORD_NUM)
@@ -23,7 +26,7 @@ def execute_offline(data_graph: nx.Graph) -> (list, nx.Graph):
         data_graph.nodes[i]["R"] = [{
             "BV_r": BitVector(size=ALL_KEYWORD_NUM),
             "ub_sup_r": 0,
-            "Inf_ub": zip(PRE_THETA_LIST, [0 for _ in PRE_THETA_LIST])
+            "Inf_ub": dict(zip(PRE_THETA_LIST, [0 for _ in PRE_THETA_LIST]))
         } for _ in range(R_MAX)]
         data_graph.nodes[i]["BV"] = bv
 
@@ -34,16 +37,16 @@ def execute_offline(data_graph: nx.Graph) -> (list, nx.Graph):
         hop_v_r_max_with_support = compute_support(graph=hop_v_r_max)
         # 2.3. updating ub_sup in origin graph if necessary
         for (u, v) in hop_v_r_max.edges:
-            if "ub_sup" not in hop_v_r_max.edges[u, v]:
-                hop_v_r_max.edges[u, v]["ub_sup"] = 0
-            if hop_v_r_max.edges[u, v]["ub_sup"] < hop_v_r_max_with_support.edges[u, v]["ub_sup"]:
-                hop_v_r_max.edges[u, v]["ub_sup"] = hop_v_r_max_with_support.edges[u, v]["ub_sup"]
+            if "ub_sup" not in data_graph.edges[u, v]:
+                data_graph.edges[u, v]["ub_sup"] = 0
+            if data_graph.edges[u, v]["ub_sup"] < hop_v_r_max_with_support.edges[u, v]["ub_sup"]:
+                data_graph.edges[u, v]["ub_sup"] = hop_v_r_max_with_support.edges[u, v]["ub_sup"]
+    print("BV and ub_sup is computed")
     # 3. compute r-hop and R for each r in [1, r_max] and each vertex
     for i in range(data_graph.number_of_nodes()):
-        for turn in range(R_MAX):  # [1, r_max]
-            r = turn + 1
+        for r in range(R_MAX):  # [1, r_max]
             # 3.0. compute hop(v_i, r)
-            hop_v_r = nx.ego_graph(G=data_graph, n=i, radius=r, center=True)
+            hop_v_r = nx.ego_graph(G=data_graph, n=i, radius=r+1, center=True)
             # 3.1. compute bv_r = all BV on vertices in hop(v_i, r)
             for node_j in hop_v_r.nodes:
                 data_graph.nodes[i]["R"][r]["BV_r"] = data_graph.nodes[i]["R"][r]["BV_r"] | hop_v_r.nodes[node_j]["BV"]
@@ -51,23 +54,20 @@ def execute_offline(data_graph: nx.Graph) -> (list, nx.Graph):
             for (u, v) in hop_v_r.edges:
                 if hop_v_r.edges[u, v]["ub_sup"] > data_graph.nodes[i]["R"][r]["ub_sup_r"]:
                     data_graph.nodes[i]["R"][r]["ub_sup_r"] = hop_v_r.edges[u, v]["ub_sup"]
-            # TODO: 3.3 compute influential score of hop(v_i,r) for each theta
+            # 3.3 compute influential score of hop(v_i,r) for each theta
             for theta_z in PRE_THETA_LIST:
-                sigma_z = compute_influential_score(hop_v_r, data_graph)
+                sigma_z = compute_influential_score(seed_community=hop_v_r, data_graph=data_graph, threshold=theta_z)
                 data_graph.nodes[i]["R"][r]["Inf_ub"][theta_z] = sigma_z
+    print("Synopsis for each vertex is computed")
     # 4. compute the child num for each partition: (4K - size of R) / size of pointers
     num_partition = math.floor((4096 - R_MAX * ((ALL_KEYWORD_NUM/8) + 8 + len(PRE_THETA_LIST)*8*2)) / 8)
     # 5. partitioning the graph and contructing the index
-    root_index = graph_partitioning(data_graph=data_graph, num_partition=num_partition)
-    print(root_index)
-    return root_index, data_graph
+    index_root = graph_partitioning(data_graph=data_graph, num_partition=num_partition)
+    print("index_root", index_root)
+    return data_graph, index_root
 
 
 if __name__ == "__main__":
-    os.environ['R_MAX'] = 3
-    os.environ['ALL_KEYWORD_NUM'] = 10000
-    os.environ['PRE_THETA_LIST'] = [0.2, 0.3, 0.4, 0.5, 0.6]
-    os.environ['BLOCK_SIZE'] = 4096
     edge_list = [
         (0, 1, 0.9),
         (1, 2, 0.9),
@@ -97,3 +97,9 @@ if __name__ == "__main__":
     data_graph.add_weighted_edges_from(edge_list)
     nx.set_node_attributes(data_graph, keywords_attr)
     execute_offline(data_graph)
+
+    # args = args_parser()
+    # data_graph = data_graph_read(args.input)
+    # root_index, data_graph = execute_offline(data_graph=data_graph)
+    # if args.save_mid:
+    #     mid_graph_save(data_graph=data_graph, index=root_index, dataset_path=args.dataset)
