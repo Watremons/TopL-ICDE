@@ -1,7 +1,6 @@
 import numpy as np
 import pymetis
 import networkx as nx
-from BitVector import BitVector
 
 SEED = 2023
 R_MAX = 3
@@ -41,7 +40,7 @@ def graph_partitioning(data_graph: nx.Graph, num_partition: int) -> list:
     # 3. processing each partition
     partitions = []
     aggregated_synopsis = [{
-        "BV_r": BitVector(size=ALL_KEYWORD_NUM),
+        "BV_r": 0,
         "ub_sup_r": 0,
         "Inf_ub": dict(zip(PRE_THETA_LIST, [0 for _ in PRE_THETA_LIST]))
     } for _ in range(R_MAX)]
