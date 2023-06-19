@@ -64,7 +64,8 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
     # 4. compute the child num for each partition: (4K - size of R) / size of pointers
     num_partition = math.floor((4096 - R_MAX * ((ALL_KEYWORD_NUM/8) + 8 + len(PRE_THETA_LIST)*8*2)) / 8)
     # 5. partitioning the graph and contructing the index
-    index_root = graph_partitioning(data_graph=data_graph, num_partition=num_partition)
+    index_root = graph_partitioning(data_graph=data_graph, num_partition=math.floor(num_partition/2), level=0)
+    print("Graph index is computed")
     print("index_root", index_root)
     return data_graph, index_root
 
