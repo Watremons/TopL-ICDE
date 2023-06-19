@@ -21,7 +21,7 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
         bv = 0
         # 1.1 hash keywords to BV for each vertex
         for keyword in data_graph.nodes[i]["keywords"]:
-            bv = bv & (1 << keyword)
+            bv = bv | (1 << keyword)
         # 1.2 save BV into R
         data_graph.nodes[i]["R"] = [{
             "BV_r": 0,
