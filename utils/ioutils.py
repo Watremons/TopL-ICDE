@@ -1,5 +1,6 @@
 import os
 import json
+import time
 import networkx as nx
 
 
@@ -57,6 +58,29 @@ def mid_graph_save(mid_data_graph: nx.Graph, index: list, dataset_path: str) -> 
     json_file.write(index_json)
     json_file.close()
     print(dataset_path, 'index.json', "saved successfully!")
+    return True
+
+
+# Save the result graphs
+def result_graph_save(result_graph: list, dataset_path: str) -> bool:
+    create_folder(folder_name=dataset_path)
+    base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    os.chdir(os.path.join(base_path, dataset_path))  # Switch path to the folder
+    for idx, result in enumerate(result_graph):
+        nx.write_gpickle(result_graph, 'result_graph' + str(idx) + '.gpickle.gz')
+    return True
+
+
+# Save the result statistics
+def statistic_file_save(stat, dataset_path: str) -> bool:
+    create_folder(folder_name=dataset_path)
+    base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    stat_file = 'statistics-' + time.strftime('%m%d-%H%M%S', time.localtime()) + '.txt'
+    result_stat_file = open(os.path.join(base_path, dataset_path, stat_file), 'w')
+    result_stat_file.write(stat.generate_stat_result())
+    result_stat_file.close()
+    print(stat.output_stat_file_name, "saved successfully!")
+    return True
 
 
 if __name__ == "__main__":
