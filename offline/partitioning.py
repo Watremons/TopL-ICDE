@@ -10,19 +10,20 @@ PRE_THETA_LIST = [0.2]
 BLOCK_SIZE = 4096
 
 
-def graph_partitioning(data_graph: nx.Graph, num_partition: int) -> list:
-    print()
-    print("Start partitioning to", num_partition, ":")
-    print(data_graph)
+def graph_partitioning(data_graph: nx.Graph, num_partition: int, level: int) -> list:
+    # print()
+    # print("Start partitioning to", num_partition, ":")
+    # print(data_graph)
     # print(data_graph.nodes)
     # print(data_graph.edges)
     # Return: size of data_graph is smaller than num_partition
     if data_graph.number_of_nodes() < num_partition:
         return [
             {
-                "P": node[0],  # node index
+                "P": node[0],       # node index
                 "R": node[1]["R"],  # node synopsis
-                "T": True  # leaf node
+                "T": True,          # leaf node
+                "L": level           # level
             } for node in data_graph.nodes(data=True)
         ]
 
@@ -36,7 +37,7 @@ def graph_partitioning(data_graph: nx.Graph, num_partition: int) -> list:
     n_cuts, membership = pymetis.part_graph(num_partition,
                                             adjacency=adjacency_list)
     # 2. print cut result
-    print('Edge Cuts: ', n_cuts)
+    # print('Edge Cuts: ', n_cuts)
     # 3. processing each partition
     partitions = []
     aggregated_synopsis = [{
@@ -54,10 +55,10 @@ def graph_partitioning(data_graph: nx.Graph, num_partition: int) -> list:
         # print("partition_nodes", len(partition_nodes), partition_nodes)
         # print("data_graph.nodes", data_graph.nodes)
         partition_subgraph = nx.subgraph(data_graph, partition_nodes)
-        print("partition_subgraph", partition_subgraph)
+        # print("partition_subgraph", partition_subgraph)
         # print(nx.is_connected(partition_subgraph))
         # 3.2. Traverse to the subgraph of this partition,return the aggregated synopsis
-        partition = graph_partitioning(data_graph=partition_subgraph, num_partition=num_partition)
+        partition = graph_partitioning(data_graph=partition_subgraph, num_partition=num_partition, level=level+1)
         # data form as follows:
         # [{
         #     "P": index_node,
@@ -98,8 +99,9 @@ def graph_partitioning(data_graph: nx.Graph, num_partition: int) -> list:
         partitions.append(partition)
     return [
         {
-            "P": partition,  # partition
+            "P": partition,            # partition
             "R": aggregated_synopsis,  # aggregated synopsis
-            "T": False  # leaf node
+            "T": False,                # leaf node
+            "L": level
         } for partition in partitions
     ]
