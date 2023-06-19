@@ -36,7 +36,13 @@ def mid_graph_read(dataset_path: str) -> (nx.Graph, list):
     # print("base_path", base_path)
     # print(os.path.join(base_path, dataset_path, 'data_graph.gpickle.gz'))
     data_graph = nx.read_gpickle(os.path.join(base_path, dataset_path, 'mid_data_graph.gpickle.gz'))
-    return data_graph
+    print(dataset_path, 'mid_data_graph.gpickle.gz', "loaded successfully!")
+    json_file = open(os.path.join(base_path, dataset_path, 'index.json'), 'r')
+    json_content = json_file.read()
+    json_file.close()
+    index_json = json.loads(json_content)
+    print(dataset_path, 'index.json', "loaded successfully!")
+    return data_graph, index_json
 
 
 # Save the mid graph and index
@@ -47,7 +53,7 @@ def mid_graph_save(mid_data_graph: nx.Graph, index: list, dataset_path: str) -> 
     nx.write_gpickle(mid_data_graph, 'mid_data_graph.gpickle.gz')
     print(dataset_path, 'mid_data_graph.gpickle.gz', "saved successfully!")
     index_json = json.dumps(index)
-    json_file = open(os.path.join(dataset_path, 'index.json'), 'w')
+    json_file = open(os.path.join(base_path, dataset_path, 'index.json'), 'w')
     json_file.write(index_json)
     json_file.close()
     print(dataset_path, 'index.json', "saved successfully!")
