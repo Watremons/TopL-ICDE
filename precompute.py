@@ -20,6 +20,7 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
     print("neighbors N for each vertex is computed")
     # 1. keyword hash for each vertex
     for i in range(data_graph.number_of_nodes()):
+        print("BV and ub_sup for node", i+1, "in", data_graph.number_of_nodes())
         bv = 0
         # 1.1 hash keywords to BV for each vertex
         for keyword in data_graph.nodes[i]["keywords"]:
@@ -48,6 +49,7 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
     print("BV and ub_sup is computed")
     # 3. compute r-hop and R for each r in [1, r_max] and each vertex
     for i in range(data_graph.number_of_nodes()):
+        print("BV and ub_sup for node", i+1, "in", data_graph.number_of_nodes())
         for r in range(R_MAX):  # [1, r_max]
             # 3.0. compute hop(v_i, r)
             hop_v_r = compute_hop_v_r(graph=data_graph, node_v=i, radius=r+1)
