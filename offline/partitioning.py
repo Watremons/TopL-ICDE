@@ -2,12 +2,9 @@ import numpy as np
 import pymetis
 import networkx as nx
 
-SEED = 2023
 R_MAX = 3
-ALL_KEYWORD_NUM = 10000
 # PRE_THETA_LIST = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
 PRE_THETA_LIST = [0.2]
-BLOCK_SIZE = 4096
 
 
 def graph_partitioning(data_graph: nx.Graph, num_partition: int, level: int) -> list:
@@ -63,7 +60,7 @@ def graph_partitioning(data_graph: nx.Graph, num_partition: int, level: int) -> 
         # [{
         #     "P": index_node,
         #     "R": [{
-        #         "BV_r": BitVector(size=ALL_KEYWORD_NUM),
+        #         "BV_r": 0,
         #         "ub_sup_r": 0,
         #         "Inf_ub": {}
         #         } for _ in range(R_MAX)],
