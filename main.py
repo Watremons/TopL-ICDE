@@ -9,7 +9,14 @@ from process import execute_online
 
 if __name__ == "__main__":
     args = args_parser()
-    stat = Statistics(input_file_folder=args.input)
+    stat = Statistics(
+        input_file_folder=args.input,
+        query_keyword_Q=[int(keyword) for keyword in args.keywords.split(",")],
+        query_support_k=args.support,
+        radius_r=args.radius,
+        threshold_theta=args.theta,
+        query_L=args.top,
+    )
     print("Start offline pre-computation:")
     if not is_precomputed(args.input):
         data_graph = data_graph_read(args.input)

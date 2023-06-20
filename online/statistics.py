@@ -16,7 +16,15 @@ class Statistics:
         finish_timestamp: the timestamp of the end
 
     """
-    def __init__(self, input_file_folder: str) -> None:
+    def __init__(
+        self,
+        input_file_folder: str,
+        query_keyword_Q: list,
+        query_support_k: int,
+        radius_r: int,
+        threshold_theta: float,
+        query_L: int
+    ) -> None:
         """
         Method:
             Constructed Method
@@ -30,8 +38,13 @@ class Statistics:
         input_info = input_file_folder.split('/')[-1].split('-')
         self.node_num = input_info[0]
         self.edge_num = input_info[1]
-        self.all_keywords_num = input_info[2]
-        self.keywords_per_vertex = input_info[3]
+        self.all_keywords_num = input_info[-2]
+        self.keywords_per_vertex = input_info[-1]
+        self.query_keyword_Q = query_keyword_Q
+        self.query_support_k = query_support_k
+        self.radius_r = radius_r
+        self.threshold_theta = threshold_theta
+        self.query_L = query_L
 
         self.start_timestamp = 0
         self.finish_timestamp = 0
@@ -63,6 +76,12 @@ class Statistics:
         result += "Total Edges: {}\n".format(self.edge_num)
         result += "All Keywords: {}\n".format(self.all_keywords_num)
         result += "Keywords Per Vertex: {}\n".format(self.keywords_per_vertex)
+        result += "-------------QUERY INFO-------------\n"
+        result += "Query Keywords: {}\n".format(self.query_keyword_Q)
+        result += "Query Support: {}\n".format(self.query_support_k)
+        result += "Query Radius: {}\n".format(self.radius_r)
+        result += "Query Threshold: {}\n".format(self.threshold_theta)
+        result += "Query L: {}\n".format(self.query_L)
         result += "\n"
         result += "-------------TIME INFO-------------\n"
         result += "Started at: {} \tFinished at: {}\n".format(self.start_timestamp, self.finish_timestamp)
