@@ -30,6 +30,17 @@ def data_graph_read(dataset_path: str) -> nx.Graph:
     return data_graph
 
 
+# Read a raw data graph
+def realworld_raw_data_graph_read(dataset: str) -> nx.Graph:
+    # Load graph from file
+    base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    file_path = os.path.join(base_path, "dataset", "realworld", dataset, dataset + '.gpickle.gz')
+    # print("base_path", base_path)
+    # print(os.path.join(base_path, dataset_path, 'data_graph.gpickle.gz'))
+    data_graph = nx.read_gpickle(file_path)
+    return data_graph
+
+
 # Read a mid data graph folder <dataset_path>
 def mid_graph_read(dataset_path: str) -> (nx.Graph, list):
     # Load graph from file
