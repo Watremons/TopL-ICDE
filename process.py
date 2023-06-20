@@ -3,23 +3,20 @@ import time
 
 import networkx as nx
 
-from utils.graphutils import compute_influential_score, compute_hop_v_r
+from utils.graphutils import compute_influential_score, compute_hop_v_r, compute_k_truss
 from online.statistics import Statistics
 
 SEED = 2023
 R_MAX = 3
 # PRE_THETA_LIST = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
 PRE_THETA_LIST = [0.2]
-BLOCK_SIZE = 4096
-
-ALL_KEYWORD_NUM = 10000
 
 
 def is_pass_pruning_entry(entry: dict, radius: int, query_bv: int, query_support: int, theta_z: float, sigma_L: float):
     # {
     #     "P": index_node,
     #     "R": [{
-    #         "BV_r": BitVector(size=ALL_KEYWORD_NUM),
+    #         "BV_r": 0,
     #         "ub_sup_r": 0,
     #         "Inf_ub": {}
     #         } for _ in range(R_MAX)],
@@ -71,6 +68,7 @@ def execute_online(
         if theta > threshold_theta:
             break
         theta_z = theta
+    radius_r_idx = radius_r - 1
     # 1. Index traversal
     while len(max_heap_H) > 0:
         start_timestamp = time.time()
@@ -84,13 +82,13 @@ def execute_online(
             if index_N[0]['T']:  # N is a leaf node with child entry made by vertex
                 leaf_node_start_timestamp = time.time()
                 for vertex_entry_i in index_N:
-                    if is_pass_pruning_entry(entry=vertex_entry_i, radius=radius_r, query_bv=q_bv, query_support=query_support_k, theta_z=theta_z, sigma_L=sigma_L):  # check the community-level pruning
+                    if is_pass_pruning_entry(entry=vertex_entry_i, radius=radius_r_idx, query_bv=q_bv, query_support=query_support_k, theta_z=theta_z, sigma_L=sigma_L):  # check the community-level pruning
                         compute_r_hop_start_timestamp = time.time()
                         # hop_v_i_r = nx.ego_graph(G=data_graph, n=vertex_entry_i["P"], radius=radius_r, center=True)
                         hop_v_i_r = compute_hop_v_r(graph=data_graph, node_v=vertex_entry_i["P"], radius=radius_r)
                         stat.compute_r_hop_time += (time.time() - compute_r_hop_start_timestamp)
                         compute_k_truss_start_timestamp = time.time()
-                        seed_community_g = nx.k_truss(G=hop_v_i_r, k=query_support_k)  # get all k-truss from hop_v_i_r
+                        seed_community_g = compute_k_truss(graph=hop_v_i_r, k=query_support_k)  # get all k-truss from hop_v_i_r
                         stat.compute_k_truss_time += (time.time() - compute_k_truss_start_timestamp)
                         # TODO: Check the influential community
                         compute_influential_score_start_timestamp = time.time()
@@ -113,8 +111,8 @@ def execute_online(
             else:  # N is non-leaf node with child entry made by index node
                 nonleaf_node_start_timestamp = time.time()
                 for child_entry in index_N:
-                    if is_pass_pruning_entry(entry=child_entry, radius=radius_r, query_bv=q_bv, query_support=query_support_k, theta_z=theta_z, sigma_L=sigma_L):  # check the community-level pruning
-                        max_heap_H.append((child_entry["R"][radius_r]["Inf_ub"][str(theta_z)], child_entry["P"]))
+                    if is_pass_pruning_entry(entry=child_entry, radius=radius_r_idx, query_bv=q_bv, query_support=query_support_k, theta_z=theta_z, sigma_L=sigma_L):  # check the community-level pruning
+                        max_heap_H.append((child_entry["R"][radius_r_idx]["Inf_ub"][str(theta_z)], child_entry["P"]))
                 stat.nonleaf_node_traverse_time += (time.time() - nonleaf_node_start_timestamp)
     return result_set_S
 
@@ -123,7 +121,7 @@ def execute_online(
 # [{
 #     "P": index_node,
 #     "R": [{
-#         "BV_r": BitVector(size=ALL_KEYWORD_NUM),
+#         "BV_r": 0,
 #         "ub_sup_r": 0,
 #         "Inf_ub": {}
 #         } for _ in range(R_MAX)],
