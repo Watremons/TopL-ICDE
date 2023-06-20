@@ -2,22 +2,24 @@ import math
 
 import networkx as nx
 
-from utils.graphutils import compute_support, compute_influential_score
+from utils.graphutils import compute_support, compute_influential_score, compute_hop_v_r
 from offline.partitioning import graph_partitioning
 
-SEED = 2023
 R_MAX = 3
 # PRE_THETA_LIST = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
 PRE_THETA_LIST = [0.2]
 BLOCK_SIZE = 4096
 
-ALL_KEYWORD_NUM = 10000
+ALL_KEYWORD_NUM = 1000
 
 
 def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
+    # 0. save the neighbors in vertex
+    for i in range(data_graph.number_of_nodes()):
+        data_graph.nodes[i]["N"] = list(data_graph.neighbors(i))
+    print("neighbors N for each vertex is computed")
     # 1. keyword hash for each vertex
     for i in range(data_graph.number_of_nodes()):
-        # bv = BitVector(size=ALL_KEYWORD_NUM)
         bv = 0
         # 1.1 hash keywords to BV for each vertex
         for keyword in data_graph.nodes[i]["keywords"]:
@@ -34,7 +36,7 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
 
         # 2. compute the edge support in each hop(v_i, r_max)
         # 2.1. compute hop(v_i, r_max)
-        hop_v_r_max = nx.ego_graph(G=data_graph, n=i, radius=R_MAX, center=True)
+        hop_v_r_max = compute_hop_v_r(graph=data_graph, node_v=i, radius=R_MAX)
         # 2.2. compute the support on the copy of hop(v_i, r_max)
         hop_v_r_max_with_support = compute_support(graph=hop_v_r_max)
         # 2.3. updating ub_sup in origin graph if necessary
@@ -48,7 +50,7 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
     for i in range(data_graph.number_of_nodes()):
         for r in range(R_MAX):  # [1, r_max]
             # 3.0. compute hop(v_i, r)
-            hop_v_r = nx.ego_graph(G=data_graph, n=i, radius=r+1, center=True)
+            hop_v_r = compute_hop_v_r(graph=data_graph, node_v=i, radius=r+1)
             # 3.1. compute bv_r = all BV on vertices in hop(v_i, r)
             for node_j in hop_v_r.nodes:  # int bit-or int
                 data_graph.nodes[i]["R"][r]["BV_r"] = data_graph.nodes[i]["R"][r]["BV_r"] | hop_v_r.nodes[node_j]["BV"]
@@ -62,11 +64,11 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
                 data_graph.nodes[i]["R"][r]["Inf_ub"][theta_z] = sigma_z
     print("Synopsis for each vertex is computed")
     # 4. compute the child num for each partition: (4K - size of R) / size of pointers
-    num_partition = math.floor((4096 - R_MAX * ((ALL_KEYWORD_NUM/8) + 8 + len(PRE_THETA_LIST)*8*2)) / 8)
+    num_partition = math.floor((BLOCK_SIZE - R_MAX * ((ALL_KEYWORD_NUM*10/8) + 8 + len(PRE_THETA_LIST)*8*2)) / 8)
     # 5. partitioning the graph and contructing the index
     index_root = graph_partitioning(data_graph=data_graph, num_partition=math.floor(num_partition/2), level=0)
     print("Graph index is computed")
-    print("index_root", index_root)
+    # print("index_root", index_root)
     return data_graph, index_root
 
 
@@ -99,7 +101,8 @@ if __name__ == "__main__":
     data_graph.add_nodes_from(range(8))
     data_graph.add_weighted_edges_from(edge_list)
     nx.set_node_attributes(data_graph, keywords_attr)
-    execute_offline(data_graph)
+    # execute_offline(data_graph)
+    print(data_graph[1])
 
     # args = args_parser()
     # data_graph = data_graph_read(args.input)

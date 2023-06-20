@@ -29,32 +29,78 @@ def compute_support(graph: nx.Graph) -> nx.Graph:
 
 # Compute the maximum support value in graph
 def compute_k_truss(graph: nx.Graph, k: int) -> nx.Graph:
-    if nx.number_of_selfloops(graph) > 0:
-        msg = (
-            "Input graph has self loops which is not permitted; "
-            "Consider using G.remove_edges_from(nx.selfloop_edges(G))."
-        )
-        raise IndexError(msg)
-
     temp_graph = graph.copy()
-
-    n_dropped = 1
-    while n_dropped > 0:
-        n_dropped = 0
-        to_drop = []
-        seen = set()
-        for u in temp_graph:
-            nbrs_u = set(temp_graph[u])
-            seen.add(u)
-            new_nbrs = [v for v in nbrs_u if v not in seen]
-            for v in new_nbrs:
-                if len(nbrs_u & set(temp_graph[v])) < (k - 2):
-                    to_drop.append((u, v))
-        temp_graph.remove_edges_from(to_drop)
+    # key: old graph, value: new graph
+    vertex_index_mapping = dict(zip([node for node in temp_graph.nodes()], [i for i in range(temp_graph.number_of_nodes())]))
+    node_info_list = [(node_info[0], node_info[1]['N'].copy()) for node_info in temp_graph.nodes(data=True)]
+    n_dropped = -1
+    to_drop = []
+    while n_dropped < len(to_drop):  # if equal, no edge is deleted
         n_dropped = len(to_drop)
-        temp_graph.remove_nodes_from(list(nx.isolates(temp_graph)))
-
+        seen = set()
+        # traverse the graph
+        for u in node_info_list:
+            u_neighbors = u[1]
+            # print(u_neighbors)
+            seen.add(u[0])
+            # save the neighbors not seen
+            new_u_neighbors = [v for v in u_neighbors if (v not in seen and temp_graph.has_node(v))]
+            if len(new_u_neighbors) == 0:
+                continue
+            v_neighbors_list = [node_info_list[vertex_index_mapping[v]][1] for v in new_u_neighbors]
+            index_for_v_neighbors_list = [0 for _ in new_u_neighbors]  # Save a index for each u_neighbor
+            support_for_v_neighbors_list = [0 for _ in new_u_neighbors]  # Save a index for each u_neighbor
+            index_for_u_neighbors = 0
+            while True:  # Sort merge join
+                now_vertex_in_u_neighbors = new_u_neighbors[index_for_u_neighbors]
+                for idx, v in enumerate(new_u_neighbors):
+                    if index_for_v_neighbors_list[idx] == len(v_neighbors_list[idx]):
+                        continue
+                    now_vertex_in_v_neighbors = v_neighbors_list[idx][index_for_v_neighbors_list[idx]]
+                    while now_vertex_in_u_neighbors >= now_vertex_in_v_neighbors:
+                        if now_vertex_in_u_neighbors == now_vertex_in_v_neighbors:  # if equaling, counter += 1
+                            support_for_v_neighbors_list[idx] += 1
+                        index_for_v_neighbors_list[idx] += 1  # Move to next neighbor in v_neighbors
+                        if index_for_v_neighbors_list[idx] == len(v_neighbors_list[idx]):
+                            break
+                        now_vertex_in_v_neighbors = v_neighbors_list[idx][index_for_v_neighbors_list[idx]]
+                if all(index_for_v_neighbors_list[idx] == len(v_neighbors_list[idx]) for idx in range(len(new_u_neighbors))):  # All of v_neighbors is visited
+                    break
+                index_for_u_neighbors += 1
+                if index_for_u_neighbors == len(new_u_neighbors):  # All of u_neighbors is visited
+                    break
+            for v_idx, support_for_v_neighbors in enumerate(support_for_v_neighbors_list):
+                # print(support_for_v_neighbors)
+                if support_for_v_neighbors < (k - 2):  # if the triangle
+                    node_info_list[vertex_index_mapping[u[0]]][1].remove(new_u_neighbors[v_idx])
+                    node_info_list[vertex_index_mapping[new_u_neighbors[v_idx]]][1].remove(u[0])
+                    to_drop.append((u[0], new_u_neighbors[v_idx]))
+    temp_graph.remove_edges_from(to_drop)
+    temp_graph.remove_nodes_from(list(nx.isolates(temp_graph)))
     return temp_graph
+
+
+# Compute the maximum support value in graph
+# def compute_k_truss(graph: nx.Graph, k: int) -> nx.Graph:
+#     temp_graph = graph.copy()
+
+#     n_dropped = 1
+#     while n_dropped > 0:
+#         n_dropped = 0
+#         to_drop = []
+#         seen = set()
+#         for u in temp_graph:
+#             nbrs_u = set(temp_graph.neighbors(u))
+#             seen.add(u)
+#             new_nbrs = [v for v in nbrs_u if v not in seen]
+#             for v in new_nbrs:
+#                 if len(nbrs_u & set(temp_graph.neighbors(v))) < (k - 2):
+#                     to_drop.append((u, v))
+#         temp_graph.remove_edges_from(to_drop)
+#         n_dropped = len(to_drop)
+#         temp_graph.remove_nodes_from(list(nx.isolates(temp_graph)))
+
+#     return temp_graph
 
 
 # Compute the influential score
