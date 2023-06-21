@@ -1,16 +1,79 @@
 import math
-
+import time
 import networkx as nx
+# import multiprocessing
+# from functools import partial
 
-from utils.graphutils import compute_support, compute_influential_score, compute_hop_v_r
+from utils.graphutils import compute_support, compute_influential_score
 from offline.partitioning import graph_partitioning
 
 R_MAX = 3
-# PRE_THETA_LIST = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
-PRE_THETA_LIST = [0.2]
+# PRE_THETA_LIST = [0.1]
+PRE_THETA_LIST = [0.05, 0.08, 0.1]
 BLOCK_SIZE = 4096
-
 ALL_KEYWORD_NUM = 1000
+
+
+def compute_bv_and_ub_sup(node_index: int, data_graph: nx.Graph):
+    if (node_index+1) % 100 == 0:
+        print("BV and ub_sup for node", node_index+1, "in", data_graph.number_of_nodes(), "has neighbors", len(list(data_graph.neighbors(node_index))))
+    bv = 0
+    # 1.1 hash keywords to BV for each vertex
+    for keyword in data_graph.nodes[node_index]["keywords"]:
+        bv = bv | (1 << keyword)
+    # 1.2 save BV into R
+    data_graph.nodes[node_index]["R"] = [{
+        "BV_r": 0,
+        "ub_sup_r": 0,
+        "Inf_ub": dict(zip(PRE_THETA_LIST, [0 for _ in PRE_THETA_LIST]))
+    } for _ in range(R_MAX)]
+    # print("Start to save BV as integer")
+    data_graph.nodes[node_index]["BV"] = bv
+    # print("End to save BV as integer")
+
+    # 2. compute the edge support in each hop(v_i, r_max)
+    # 2.1. compute hop(v_i, r_max)
+    # start_timestamp = time.time()
+    hop_v_r_max = nx.ego_graph(G=data_graph, n=node_index, radius=R_MAX, center=True)
+    # hop_v_r_max = compute_hop_v_r(graph=data_graph, node_v=i, radius=R_MAX)
+    # print("compute r_max hop for", time.time()-start_timestamp)
+    # 2.2. compute the support on the copy of hop(v_i, r_max)
+    # start_timestamp = time.time()
+    hop_v_r_max_with_support = compute_support(graph=hop_v_r_max)
+    # print("compute support for", time.time()-start_timestamp)
+    # 2.3. updating ub_sup in origin graph if necessary
+    for (u, v) in hop_v_r_max.edges:
+        if "ub_sup" not in data_graph.edges[u, v]:
+            data_graph.edges[u, v]["ub_sup"] = 0
+        if data_graph.edges[u, v]["ub_sup"] < hop_v_r_max_with_support.edges[u, v]["ub_sup"]:
+            data_graph.edges[u, v]["ub_sup"] = hop_v_r_max_with_support.edges[u, v]["ub_sup"]
+
+
+def compute_synopsis(node_index: int, data_graph: nx.Graph):
+    if (node_index+1) % 100 == 0:
+        print("BV_r, ub_sup_r and Inf_ub for node", node_index+1, "in", data_graph.number_of_nodes())
+    for r in range(R_MAX):  # [1, r_max]
+        # 3.0. compute hop(v_i, r)
+        # starttime = time.time()
+        hop_v_r = nx.ego_graph(G=data_graph, n=node_index, radius=r+1, center=True)
+        # print("compute r-hop", time.time()-starttime)
+        # hop_v_r = compute_hop_v_r(graph=data_graph, node_v=i, radius=r+1)
+        # 3.1. compute bv_r = all BV on vertices in hop(v_i, r)
+        # starttime = time.time()
+        for node_j in hop_v_r.nodes:  # int bit-or int
+            data_graph.nodes[node_index]["R"][r]["BV_r"] = data_graph.nodes[node_index]["R"][r]["BV_r"] | hop_v_r.nodes[node_j]["BV"]
+        # print("compute BV_r", time.time()-starttime)
+        # 3.2. compute ub_sup_r = max support of all edges in hop(v_i, r)
+        # starttime = time.time()
+        for (u, v) in hop_v_r.edges:
+            if u > v and hop_v_r.edges[u, v]["ub_sup"] > data_graph.nodes[node_index]["R"][r]["ub_sup_r"]:
+                data_graph.nodes[node_index]["R"][r]["ub_sup_r"] = hop_v_r.edges[u, v]["ub_sup"]
+        # print("compute ub_sup_r", time.time()-starttime)
+        # 3.3 compute influential score of hop(v_i,r) for each theta
+        # last_sigma_z = 0
+        for theta_z in reversed(PRE_THETA_LIST):
+            sigma_z = compute_influential_score(seed_community=hop_v_r, data_graph=data_graph, threshold=theta_z)
+            data_graph.nodes[node_index]["R"][r]["Inf_ub"][theta_z] = sigma_z
 
 
 def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
@@ -20,54 +83,27 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
     print("neighbors N for each vertex is computed")
     # 1. keyword hash for each vertex
     for i in range(data_graph.number_of_nodes()):
-        print("BV and ub_sup for node", i+1, "in", data_graph.number_of_nodes())
-        bv = 0
-        # 1.1 hash keywords to BV for each vertex
-        for keyword in data_graph.nodes[i]["keywords"]:
-            bv = bv | (1 << keyword)
-        # 1.2 save BV into R
-        data_graph.nodes[i]["R"] = [{
-            "BV_r": 0,
-            "ub_sup_r": 0,
-            "Inf_ub": dict(zip(PRE_THETA_LIST, [0 for _ in PRE_THETA_LIST]))
-        } for _ in range(R_MAX)]
-        # print("Start to save BV as integer")
-        data_graph.nodes[i]["BV"] = bv
-        # print("End to save BV as integer")
-
-        # 2. compute the edge support in each hop(v_i, r_max)
-        # 2.1. compute hop(v_i, r_max)
-        hop_v_r_max = compute_hop_v_r(graph=data_graph, node_v=i, radius=R_MAX)
-        # 2.2. compute the support on the copy of hop(v_i, r_max)
-        hop_v_r_max_with_support = compute_support(graph=hop_v_r_max)
-        # 2.3. updating ub_sup in origin graph if necessary
-        for (u, v) in hop_v_r_max.edges:
-            if "ub_sup" not in data_graph.edges[u, v]:
-                data_graph.edges[u, v]["ub_sup"] = 0
-            if data_graph.edges[u, v]["ub_sup"] < hop_v_r_max_with_support.edges[u, v]["ub_sup"]:
-                data_graph.edges[u, v]["ub_sup"] = hop_v_r_max_with_support.edges[u, v]["ub_sup"]
+        compute_bv_and_ub_sup(node_index=i, data_graph=data_graph)
+    # pool = multiprocessing.Pool()
+    # partial_compute_bv_and_ub_sup = partial(compute_bv_and_ub_sup, data_graph=data_graph)
+    # pool.map(partial_compute_bv_and_ub_sup, range(data_graph.number_of_nodes()))
+    # pool.close()
+    # pool.join()
     print("BV and ub_sup is computed")
     # 3. compute r-hop and R for each r in [1, r_max] and each vertex
     for i in range(data_graph.number_of_nodes()):
-        print("BV and ub_sup for node", i+1, "in", data_graph.number_of_nodes())
-        for r in range(R_MAX):  # [1, r_max]
-            # 3.0. compute hop(v_i, r)
-            hop_v_r = compute_hop_v_r(graph=data_graph, node_v=i, radius=r+1)
-            # 3.1. compute bv_r = all BV on vertices in hop(v_i, r)
-            for node_j in hop_v_r.nodes:  # int bit-or int
-                data_graph.nodes[i]["R"][r]["BV_r"] = data_graph.nodes[i]["R"][r]["BV_r"] | hop_v_r.nodes[node_j]["BV"]
-            # 3.2. compute ub_sup_r = max support of all edges in hop(v_i, r)
-            for (u, v) in hop_v_r.edges:
-                if hop_v_r.edges[u, v]["ub_sup"] > data_graph.nodes[i]["R"][r]["ub_sup_r"]:
-                    data_graph.nodes[i]["R"][r]["ub_sup_r"] = hop_v_r.edges[u, v]["ub_sup"]
-            # 3.3 compute influential score of hop(v_i,r) for each theta
-            for theta_z in PRE_THETA_LIST:
-                sigma_z = compute_influential_score(seed_community=hop_v_r, data_graph=data_graph, threshold=theta_z)
-                data_graph.nodes[i]["R"][r]["Inf_ub"][theta_z] = sigma_z
+        compute_synopsis(node_index=i, data_graph=data_graph)
+    # pool = multiprocessing.Pool()
+    # partial_compute_synopsis = partial(compute_synopsis, data_graph=data_graph)
+    # pool.map(partial_compute_synopsis, range(data_graph.number_of_nodes()))
+    # pool.close()
+    # pool.join()
     print("Synopsis for each vertex is computed")
     # 4. compute the child num for each partition: (4K - size of R) / size of pointers
-    num_partition = math.floor((BLOCK_SIZE - R_MAX * ((ALL_KEYWORD_NUM*10/8) + 8 + len(PRE_THETA_LIST)*8*2)) / 8)
+    num_partition = 32
     # 5. partitioning the graph and contructing the index
+    print("partition raw num", math.floor((BLOCK_SIZE - R_MAX * ((ALL_KEYWORD_NUM*10/8) + 8 + len(PRE_THETA_LIST)*8*2)) / 8))
+    print("partition num", math.floor(num_partition/2))
     index_root = graph_partitioning(data_graph=data_graph, num_partition=math.floor(num_partition/2), level=0)
     print("Graph index is computed")
     # print("index_root", index_root)

@@ -3,13 +3,14 @@ import time
 
 import networkx as nx
 
-from utils.graphutils import compute_influential_score, compute_hop_v_r, compute_k_truss
+from utils.graphutils import compute_influential_score, compute_hop_v_r
 from online.statistics import Statistics
 
 SEED = 2023
 R_MAX = 3
-# PRE_THETA_LIST = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
-PRE_THETA_LIST = [0.2]
+# PRE_THETA_LIST = [0.2]
+PRE_THETA_LIST = [0.05, 0.08, 0.1]
+# PRE_THETA_LIST = [0.2]
 
 
 def is_pass_pruning_entry(entry: dict, radius: int, query_bv: int, query_support: int, theta_z: float, sigma_L: float):
@@ -68,6 +69,7 @@ def execute_online(
         if theta > threshold_theta:
             break
         theta_z = theta
+    # print("theta_z", theta_z)
     radius_r_idx = radius_r - 1
     # 1. Index traversal
     while len(max_heap_H) > 0:
@@ -88,13 +90,17 @@ def execute_online(
                         hop_v_i_r = compute_hop_v_r(graph=data_graph, node_v=vertex_entry_i["P"], radius=radius_r)
                         stat.compute_r_hop_time += (time.time() - compute_r_hop_start_timestamp)
                         compute_k_truss_start_timestamp = time.time()
-                        seed_community_g = compute_k_truss(graph=hop_v_i_r, k=query_support_k)  # get all k-truss from hop_v_i_r
+                        # seed_community_g = compute_k_truss(graph=hop_v_i_r, k=query_support_k)  # get all k-truss from hop_v_i_r
+                        seed_community_g = nx.k_truss(G=hop_v_i_r, k=query_support_k)
+                        if seed_community_g.number_of_nodes() == 0 or seed_community_g.nodes in [result[0].nodes for result in result_set_S]:  # Delete the same community
+                            continue
                         stat.compute_k_truss_time += (time.time() - compute_k_truss_start_timestamp)
                         # TODO: Check the influential community
                         compute_influential_score_start_timestamp = time.time()
                         sigma_g = compute_influential_score(seed_community=seed_community_g, data_graph=data_graph, threshold=threshold_theta)
                         stat.compute_influential_score_time += (time.time() - compute_influential_score_start_timestamp)
                         modify_result_set_start_timestamp = time.time()
+                        # print(seed_community_g)
                         if len(result_set_S) < query_L:  # add to result set if size is less than L
                             result_set_S.add((seed_community_g, sigma_g))
                             if len(result_set_S) == query_L:
