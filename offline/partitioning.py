@@ -3,8 +3,9 @@ import pymetis
 import networkx as nx
 
 R_MAX = 3
-# PRE_THETA_LIST = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
-PRE_THETA_LIST = [0.2]
+PRE_THETA_LIST = [0.05, 0.08, 0.1]
+# PRE_THETA_LIST = [0.08]
+# PRE_THETA_LIST = [0.2]
 
 
 def graph_partitioning(data_graph: nx.Graph, num_partition: int, level: int) -> list:
