@@ -20,10 +20,13 @@ def compute_hop_v_r(graph: nx.Graph, node_v: int, radius: int) -> nx.Graph:
 # Compute maximum support in graph
 def compute_support(graph: nx.Graph) -> nx.Graph:
     return_graph = graph.copy()
+    seen = set()
     for node_u in return_graph.nodes:
-        for node_v in return_graph.neighbors(node_u):
-            if node_u > node_v:  # Make sure compute only once
-                return_graph.edges[node_u, node_v]["ub_sup"] = len(list(nx.common_neighbors(return_graph, node_u, node_v)))  # The support value equals to the common neighbor number
+        u_neighbors_set = set(return_graph.neighbors(node_u))
+        seen.add(node_u)
+        u_neighbors_filtered = [v for v in u_neighbors_set if v not in seen]
+        for node_v in u_neighbors_filtered:
+            return_graph.edges[node_u, node_v]["ub_sup"] = len(u_neighbors_set & set(return_graph.neighbors(node_v)))
     return return_graph
 
 
