@@ -27,7 +27,7 @@ def generate_dataset(seed: int, keywords_per_vertex_num: int, all_keyword_num: i
     print('Min Degree: ', min(d for v, d in nx.degree(target_graph)))
 
     # 2.1. Delete some edges until edge num equals node_num * neighbor_num / 2
-    while target_graph.number_of_edges() > node_num * neighbor_num / 2:
+    while target_graph.number_of_edges() > node_num * neighbor_num:
         (u, v) = random.sample(target_graph.edges, 1)[0]
         G = copy.deepcopy(target_graph)
         G.remove_edge(u, v)
@@ -53,7 +53,7 @@ def generate_dataset(seed: int, keywords_per_vertex_num: int, all_keyword_num: i
         for keyword in keywords:
             label_counter[keyword] += 1
         target_graph.nodes[i]['keywords'] = keywords
-        print(target_graph.nodes[i])
+        # print(target_graph.nodes[i])
 
     # print([{keywords_set[i]: label_counter[i]} for i in range(all_keyword_num)])
 
@@ -124,10 +124,50 @@ if __name__ == "__main__":
     # generate_dataset(
     #     seed=seed,
     #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
+    #     all_keyword_num=100,  # 500, 800, 1K, 2K, 5K
+    #     node_num=1000,  # 10K, 30K, 50K, 100K, 500K, 1M
+    #     neighbor_num=7,
+    #     add_edge_probability=0.42
+    # )
+    generate_dataset(
+        seed=seed,
+        keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
+        all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
+        node_num=10000,  # 10K, 30K, 50K, 100K, 500K, 1M
+        neighbor_num=7,
+        add_edge_probability=0.42
+    )
+    # generate_dataset(
+    #     seed=seed,
+    #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
     #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
     #     node_num=50000,  # 10K, 30K, 50K, 100K, 500K, 1M
-    #     neighbor_num=5,
-    #     add_edge_probability=0.250185
+    #     neighbor_num=8,
+    #     add_edge_probability=0.42
+    # )
+    # generate_dataset(
+    #     seed=seed,
+    #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
+    #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
+    #     node_num=100000,  # 10K, 30K, 50K, 100K, 500K, 1M
+    #     neighbor_num=8,
+    #     add_edge_probability=0.42
+    # )
+    # generate_dataset(
+    #     seed=seed,
+    #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
+    #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
+    #     node_num=500000,  # 10K, 30K, 50K, 100K, 500K, 1M
+    #     neighbor_num=8,
+    #     add_edge_probability=0.42
+    # )
+    # generate_dataset(
+    #     seed=seed,
+    #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
+    #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
+    #     node_num=1000000,  # 10K, 30K, 50K, 100K, 500K, 1M
+    #     neighbor_num=8,
+    #     add_edge_probability=0.42
     # )
     # generate_dataset_based_realworld(
     #     seed=seed,
@@ -135,9 +175,9 @@ if __name__ == "__main__":
     #     keywords_per_vertex_num=3,
     #     dataset="dblp"
     # )
-    generate_dataset_based_realworld(
-        seed=seed,
-        all_keyword_num=1000,
-        keywords_per_vertex_num=3,
-        dataset="youtube"
-    )
+    # generate_dataset_based_realworld(
+    #     seed=seed,
+    #     all_keyword_num=1000,
+    #     keywords_per_vertex_num=3,
+    #     dataset="youtube"
+    # )
