@@ -15,8 +15,6 @@ ALL_KEYWORD_NUM = 1000
 
 
 def compute_bv_and_ub_sup(node_index: int, data_graph: nx.Graph):
-    if (node_index+1) % 100 == 0:
-        print("BV and ub_sup for node", node_index+1, "in", data_graph.number_of_nodes(), "has neighbors", len(list(data_graph.neighbors(node_index))))
     bv = 0
     # 1.1 hash keywords to BV for each vertex
     for keyword in data_graph.nodes[node_index]["keywords"]:
@@ -50,8 +48,6 @@ def compute_bv_and_ub_sup(node_index: int, data_graph: nx.Graph):
 
 
 def compute_synopsis(node_index: int, data_graph: nx.Graph):
-    if (node_index+1) % 100 == 0:
-        print("BV_r, ub_sup_r and Inf_ub for node", node_index+1, "in", data_graph.number_of_nodes())
     for r in range(R_MAX):  # [1, r_max]
         # 3.0. compute hop(v_i, r)
         # starttime = time.time()
@@ -78,24 +74,28 @@ def compute_synopsis(node_index: int, data_graph: nx.Graph):
 
 def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
     # 0. save the neighbors in vertex
-    for i in range(data_graph.number_of_nodes()):
+    for i in data_graph.nodes:
         data_graph.nodes[i]["N"] = list(data_graph.neighbors(i))
     print("neighbors N for each vertex is computed")
     # 1. keyword hash for each vertex
-    for i in range(data_graph.number_of_nodes()):
+    for node_index, i in enumerate(data_graph.nodes):
+        if (node_index+1) % 100 == 0:
+            print("BV and ub_sup for node", node_index+1, "in", data_graph.number_of_nodes(), "has neighbors", len(list(data_graph.neighbors(i))))
         compute_bv_and_ub_sup(node_index=i, data_graph=data_graph)
     # pool = multiprocessing.Pool()
     # partial_compute_bv_and_ub_sup = partial(compute_bv_and_ub_sup, data_graph=data_graph)
-    # pool.map(partial_compute_bv_and_ub_sup, range(data_graph.number_of_nodes()))
+    # pool.map(partial_compute_bv_and_ub_sup, data_graph.nodes)
     # pool.close()
     # pool.join()
     print("BV and ub_sup is computed")
     # 3. compute r-hop and R for each r in [1, r_max] and each vertex
-    for i in range(data_graph.number_of_nodes()):
+    for node_index, i in enumerate(data_graph.nodes):
+        if (node_index+1) % 100 == 0:
+            print("BV_r, ub_sup_r and Inf_ub for node", node_index+1, "in", data_graph.number_of_nodes())
         compute_synopsis(node_index=i, data_graph=data_graph)
     # pool = multiprocessing.Pool()
     # partial_compute_synopsis = partial(compute_synopsis, data_graph=data_graph)
-    # pool.map(partial_compute_synopsis, range(data_graph.number_of_nodes()))
+    # pool.map(partial_compute_synopsis, data_graph.nodes)
     # pool.close()
     # pool.join()
     print("Synopsis for each vertex is computed")
