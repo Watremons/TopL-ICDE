@@ -125,7 +125,7 @@ if __name__ == "__main__":
     #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
     #     all_keyword_num=100,  # 500, 800, 1K, 2K, 5K
     #     node_num=1000,  # 10K, 30K, 50K, 100K, 500K, 1M
-    #     neighbor_num=7,
+    #     neighbor_num=6,
     #     add_edge_probability=0.42
     # )
     # generate_dataset(
@@ -133,15 +133,23 @@ if __name__ == "__main__":
     #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
     #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
     #     node_num=10000,  # 10K, 30K, 50K, 100K, 500K, 1M
-    #     neighbor_num=7,
+    #     neighbor_num=6,
     #     add_edge_probability=0.42
     # )
     # generate_dataset(
     #     seed=seed,
     #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
     #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
+    #     node_num=30000,  # 10K, 30K, 50K, 100K, 500K, 1M
+    #     neighbor_num=6,
+    #     add_edge_probability=0.42
+    # )
+    # generate_dataset(
+    #     seed=seed,
+    #     keywords_per_vertex_num=5,  # 1, 2, 3, 4, 5
+    #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
     #     node_num=50000,  # 10K, 30K, 50K, 100K, 500K, 1M
-    #     neighbor_num=8,
+    #     neighbor_num=6,
     #     add_edge_probability=0.42
     # )
     # generate_dataset(
@@ -149,7 +157,7 @@ if __name__ == "__main__":
     #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
     #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
     #     node_num=100000,  # 10K, 30K, 50K, 100K, 500K, 1M
-    #     neighbor_num=8,
+    #     neighbor_num=6,
     #     add_edge_probability=0.42
     # )
     # generate_dataset(
@@ -157,7 +165,7 @@ if __name__ == "__main__":
     #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
     #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
     #     node_num=500000,  # 10K, 30K, 50K, 100K, 500K, 1M
-    #     neighbor_num=8,
+    #     neighbor_num=6,
     #     add_edge_probability=0.42
     # )
     # generate_dataset(
@@ -165,7 +173,7 @@ if __name__ == "__main__":
     #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
     #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
     #     node_num=1000000,  # 10K, 30K, 50K, 100K, 500K, 1M
-    #     neighbor_num=8,
+    #     neighbor_num=6,
     #     add_edge_probability=0.42
     # )
     # generate_dataset_based_realworld(
@@ -186,9 +194,9 @@ if __name__ == "__main__":
     #     keywords_per_vertex_num=3,
     #     dataset="epinions"
     # )
-    generate_dataset_based_realworld(
-        seed=seed,
-        all_keyword_num=1000,
-        keywords_per_vertex_num=3,
-        dataset="facebook"
-    )
+    # generate_dataset_based_realworld(
+    #     seed=seed,
+    #     all_keyword_num=1000,
+    #     keywords_per_vertex_num=3,
+    #     dataset="facebook"
+    # )
