@@ -35,7 +35,6 @@ def generate_dataset(seed: int, keywords_per_vertex_num: int, all_keyword_num: i
             target_graph.remove_edge(u, v)
 
     # Print infos
-    print(nx.is_connected(target_graph))
     edges_num = target_graph.number_of_edges()
     average_degree = sum(
         d for v, d in nx.degree(target_graph)) / target_graph.number_of_nodes()
@@ -47,7 +46,7 @@ def generate_dataset(seed: int, keywords_per_vertex_num: int, all_keyword_num: i
     # 2.2. Add the keyword set to each vertex
     keywords_set = range(0, all_keyword_num)
     label_counter = [0 for _ in range(all_keyword_num)]
-    for i in range(target_graph.number_of_nodes()):
+    for i in target_graph.nodes:
         keyword_num = np.random.randint(max(keywords_per_vertex_num-1, 0), keywords_per_vertex_num+2)  # the num is key_per ± 1
         keywords = random.sample(keywords_set, keyword_num)
         for keyword in keywords:
@@ -59,7 +58,7 @@ def generate_dataset(seed: int, keywords_per_vertex_num: int, all_keyword_num: i
 
     # TODO: 2.3. Add the weight (propagation probability) to each edge
     # WC model: pp(u, v) for an edge (u, v) is 1/d(v), where d(v) is the in-degree of v.
-    for i in range(target_graph.number_of_nodes()):
+    for i in target_graph.nodes:
         neighbors_num = len(list(target_graph.neighbors(i)))
         for neighbor in target_graph.neighbors(i):
             target_graph.edges[i, neighbor]["weight"] = 1 / neighbors_num
@@ -81,7 +80,7 @@ def generate_dataset_based_realworld(seed: int, all_keyword_num: int, keywords_p
     # 1. Add the keyword set to each vertex
     keywords_set = range(0, all_keyword_num)
     label_counter = [0 for _ in range(all_keyword_num)]
-    for i in range(data_graph.number_of_nodes()):
+    for i in data_graph.nodes:
         data_graph.nodes[i].clear()
         keyword_num = np.random.randint(max(keywords_per_vertex_num-1, 0), keywords_per_vertex_num+2)  # the num is key_per ± 1
         keywords = random.sample(keywords_set, keyword_num)
@@ -92,7 +91,7 @@ def generate_dataset_based_realworld(seed: int, all_keyword_num: int, keywords_p
 
     # TODO: 2.3. Add the weight (propagation probability) to each edge
     # WC model: pp(u, v) for an edge (u, v) is 1/d(v), where d(v) is the in-degree of v.
-    for i in range(data_graph.number_of_nodes()):
+    for i in data_graph.nodes:
         neighbors_num = len(list(data_graph.neighbors(i)))
         for neighbor in data_graph.neighbors(i):
             # data_graph.edges[i, neighbor].clear()
@@ -129,14 +128,14 @@ if __name__ == "__main__":
     #     neighbor_num=7,
     #     add_edge_probability=0.42
     # )
-    generate_dataset(
-        seed=seed,
-        keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
-        all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
-        node_num=10000,  # 10K, 30K, 50K, 100K, 500K, 1M
-        neighbor_num=7,
-        add_edge_probability=0.42
-    )
+    # generate_dataset(
+    #     seed=seed,
+    #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
+    #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
+    #     node_num=10000,  # 10K, 30K, 50K, 100K, 500K, 1M
+    #     neighbor_num=7,
+    #     add_edge_probability=0.42
+    # )
     # generate_dataset(
     #     seed=seed,
     #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
@@ -179,5 +178,17 @@ if __name__ == "__main__":
     #     seed=seed,
     #     all_keyword_num=1000,
     #     keywords_per_vertex_num=3,
-    #     dataset="youtube"
+    #     dataset="amazon"
     # )
+    # generate_dataset_based_realworld(
+    #     seed=seed,
+    #     all_keyword_num=1000,
+    #     keywords_per_vertex_num=3,
+    #     dataset="epinions"
+    # )
+    generate_dataset_based_realworld(
+        seed=seed,
+        all_keyword_num=1000,
+        keywords_per_vertex_num=3,
+        dataset="facebook"
+    )
