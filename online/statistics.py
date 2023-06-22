@@ -35,11 +35,16 @@ class Statistics:
         self.output_stat_file_name = os.path.join(input_file_folder, "statistics.txt")
 
         self.solver_result = []
+        distribution = "uniform"
         input_info = input_file_folder.split('/')[-1].split('-')
+        if len(input_info) < 2:
+            input_info = input_file_folder.split('/')[-2].split('-')
+            distribution = input_file_folder.split('/')[-1]
         self.node_num = input_info[0]
         self.edge_num = input_info[1]
         self.all_keywords_num = input_info[-2]
         self.keywords_per_vertex = input_info[-1]
+        self.distribution = distribution
         self.query_keyword_Q = query_keyword_Q
         self.query_support_k = query_support_k
         self.radius_r = radius_r
@@ -76,6 +81,7 @@ class Statistics:
         result += "Total Edges: {}\n".format(self.edge_num)
         result += "All Keywords: {}\n".format(self.all_keywords_num)
         result += "Keywords Per Vertex: {}\n".format(self.keywords_per_vertex)
+        result += "Distribution: {}\n".format(self.distribution)
         result += "-------------QUERY INFO-------------\n"
         result += "Query Keywords: {}\n".format(self.query_keyword_Q)
         result += "Query Support: {}\n".format(self.query_support_k)
