@@ -7,6 +7,17 @@ from precompute import execute_offline
 from process import execute_online
 
 
+def count_leaf_node(now_index):
+    if len(now_index) == 0:
+        return 0
+    if now_index[0]["T"]:
+        return 1
+    now_counter = 0
+    for next_index_entry in now_index:
+        now_counter += count_leaf_node(next_index_entry["P"])
+    return now_counter
+
+
 if __name__ == "__main__":
     args = args_parser()
     stat = Statistics(
@@ -36,6 +47,7 @@ if __name__ == "__main__":
         stat=stat
     )
     stat.finish_timestamp = time.time()
+    stat.leaf_node_counter = count_leaf_node(index_root)
     stat.solver_result = list(result_set)
     for result in result_set:
         print(result)
