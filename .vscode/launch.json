@@ -11,11 +11,11 @@
             "program": "./main.py",
             "console": "integratedTerminal",
             "args": [
-                "-i", "dataset/manual/50000-124933-1000-3",
+                "-i", "dataset/manual/100000-426096-1000-3",
                 "-Q", "1,2,3,4,5",
-                "-k", "2",
+                "-k", "4",
                 "-r", "2",
-                "-t", "0.2",
+                "-t", "0.08",
                 "-L", "5"
             ],
             "justMyCode": true
