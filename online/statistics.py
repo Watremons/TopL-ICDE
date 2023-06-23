@@ -65,7 +65,7 @@ class Statistics:
         self.vertex_pruning_counter = 0
         self.entry_pruning_counter = 0
         self.leaf_node_counter = 0
-        self.leaf_node_pruning_counter = 0
+        self.leaf_node_visit_counter = 0
 
     def generate_stat_result(self) -> str:
         """
@@ -99,7 +99,7 @@ class Statistics:
         result += "Pruning Vertices: {}\n".format(self.vertex_pruning_counter)
         result += "Pruning Entries: {}\n".format(self.entry_pruning_counter)
         result += "Leaf Nodes: {}\n".format(self.leaf_node_counter)
-        result += "Pruning Leaf Nodes: {}\n".format(self.leaf_node_pruning_counter)
+        result += "Pruning Leaf Nodes: {}\n".format(self.leaf_node_counter - self.leaf_node_visit_counter)
         result += "\n"
         result += "-------------TIME INFO-------------\n"
         result += "Started at: {} \tFinished at: {}\n".format(self.start_timestamp, self.finish_timestamp)
