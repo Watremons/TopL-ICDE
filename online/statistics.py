@@ -62,6 +62,9 @@ class Statistics:
         self.compute_influential_score_time = 0
         self.modify_result_set_time = 0
 
+        self.vertex_pruning_counter = 0
+        self.entry_pruning_counter = 0
+
     def generate_stat_result(self) -> str:
         """
         Method:
@@ -88,6 +91,10 @@ class Statistics:
         result += "Query Radius: {}\n".format(self.radius_r)
         result += "Query Threshold: {}\n".format(self.threshold_theta)
         result += "Query L: {}\n".format(self.query_L)
+        result += "\n"
+        result += "-------------Pruning INFO-------------\n"
+        result += "Pruning Vertices: {}\n".format(self.vertex_pruning_counter)
+        result += "Pruning Entries: {}\n".format(self.entry_pruning_counter)
         result += "\n"
         result += "-------------TIME INFO-------------\n"
         result += "Started at: {} \tFinished at: {}\n".format(self.start_timestamp, self.finish_timestamp)
