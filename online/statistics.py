@@ -64,6 +64,8 @@ class Statistics:
 
         self.vertex_pruning_counter = 0
         self.entry_pruning_counter = 0
+        self.leaf_node_counter = 0
+        self.leaf_node_pruning_counter = 0
 
     def generate_stat_result(self) -> str:
         """
@@ -85,6 +87,7 @@ class Statistics:
         result += "All Keywords: {}\n".format(self.all_keywords_num)
         result += "Keywords Per Vertex: {}\n".format(self.keywords_per_vertex)
         result += "Distribution: {}\n".format(self.distribution)
+        result += "\n"
         result += "-------------QUERY INFO-------------\n"
         result += "Query Keywords: {}\n".format(self.query_keyword_Q)
         result += "Query Support: {}\n".format(self.query_support_k)
@@ -95,6 +98,8 @@ class Statistics:
         result += "-------------Pruning INFO-------------\n"
         result += "Pruning Vertices: {}\n".format(self.vertex_pruning_counter)
         result += "Pruning Entries: {}\n".format(self.entry_pruning_counter)
+        result += "Leaf Nodes: {}\n".format(self.leaf_node_counter)
+        result += "Pruning Leaf Nodes: {}\n".format(self.leaf_node_pruning_counter)
         result += "\n"
         result += "-------------TIME INFO-------------\n"
         result += "Started at: {} \tFinished at: {}\n".format(self.start_timestamp, self.finish_timestamp)
