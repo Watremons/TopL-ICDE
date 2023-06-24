@@ -2,18 +2,13 @@ import numpy as np
 import pymetis
 import networkx as nx
 
-R_MAX = 3
-PRE_THETA_LIST = [0.05, 0.08, 0.1]
-# PRE_THETA_LIST = [0.08]
+R_MAX = 2
+# PRE_THETA_LIST = [0.05, 0.08, 0.1]
+PRE_THETA_LIST = [0.08]
 # PRE_THETA_LIST = [0.2]
 
 
 def graph_partitioning(data_graph: nx.Graph, num_partition: int, level: int) -> list:
-    # print()
-    # print("Start partitioning to", num_partition, ":")
-    # print(data_graph)
-    # print(data_graph.nodes)
-    # print(data_graph.edges)
     # Return: size of data_graph is smaller than num_partition
     if data_graph.number_of_nodes() < num_partition:
         return [
@@ -80,19 +75,6 @@ def graph_partitioning(data_graph: nx.Graph, num_partition: int, level: int) -> 
                 for theta_z in PRE_THETA_LIST:
                     if aggregated_synopsis[r]["Inf_ub"][theta_z] < child_entry['R'][r]["Inf_ub"][theta_z]:
                         aggregated_synopsis[r]["Inf_ub"][theta_z] = child_entry['R'][r]["Inf_ub"][theta_z]
-
-        # 扩展
-        # nodes = set(partition_subgraph.nodes)
-        # for node in partition_subgraph.nodes:
-        #     extend_nodes = list(
-        #         nx.bfs_tree(data_graph, node, depth_limit=1))
-        #     nodes = nodes | set(extend_nodes)
-        # 去重
-        # print(len(nodes))
-        # nodes = list(nodes)
-        # part_extend = nx.subgraph(data_graph, nodes)
-        # print(part_extend)
-        # print(nx.is_connected(part_extend))
 
         partitions.append(partition)
     return [

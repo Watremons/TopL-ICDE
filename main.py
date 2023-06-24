@@ -1,9 +1,9 @@
 import time
 
 from utils.argparser import args_parser
-from utils.ioutils import data_graph_read, mid_graph_save, mid_graph_read, is_precomputed, result_graph_save, statistic_file_save
+from utils.ioutils import data_graph_read, mid_graph_save, index_save, mid_graph_read, index_read, is_precomputed, is_indexed, result_graph_save, statistic_file_save
 from online.statistics import Statistics
-from precompute import execute_offline
+from precompute import execute_offline, construct_index
 from process import execute_online
 
 
@@ -28,13 +28,23 @@ if __name__ == "__main__":
         threshold_theta=args.theta,
         query_L=args.top,
     )
-    print("Start offline pre-computation:")
     if not is_precomputed(args.input):
+        print("No available precomputed graph!")
+        print("Start offline pre-computation:")
         data_graph = data_graph_read(args.input)
-        data_graph, index_root = execute_offline(data_graph=data_graph)
-        mid_graph_save(mid_data_graph=data_graph, index=index_root, dataset_path=args.input)
+        mid_data_graph = execute_offline(data_graph=data_graph)
+        mid_graph_save(mid_data_graph=data_graph, dataset_path=args.input)
+    if not is_indexed(args.input):
+        print("No available index!")
+        print("Start index construction:")
+        mid_data_graph = mid_graph_read(dataset_path=args.input)
+        index_root = construct_index(data_graph=mid_data_graph)
+        index_save(index=index_root, dataset_path=args.input)
+    print("Load precomputed data graph:")
+    mid_data_graph = mid_graph_read(dataset_path=args.input)
+    print("Load constructed index:")
+    index_root = index_read(dataset_path=args.input)
     print("Start online processing:")
-    mid_data_graph, index_root = mid_graph_read(dataset_path=args.input)
     stat.start_timestamp = time.time()
     result_set = execute_online(
         data_graph=mid_data_graph,

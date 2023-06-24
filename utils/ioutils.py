@@ -7,8 +7,13 @@ import networkx as nx
 def is_precomputed(dataset_path: str) -> bool:
     base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     mid_graph_file_path = os.path.join(base_path, dataset_path, 'mid_data_graph.gpickle.gz')
+    return os.path.exists(mid_graph_file_path)
+
+
+def is_indexed(dataset_path: str) -> bool:
+    base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     index_json_file_path = os.path.join(base_path, dataset_path, 'index.json')
-    return (os.path.exists(mid_graph_file_path) and os.path.exists(index_json_file_path))
+    return os.path.exists(index_json_file_path)
 
 
 # Create folder at "../<folder_name>"
@@ -41,29 +46,43 @@ def realworld_raw_data_graph_read(dataset: str) -> nx.Graph:
     return data_graph
 
 
-# Read a mid data graph folder <dataset_path>
-def mid_graph_read(dataset_path: str) -> (nx.Graph, list):
+# Read a mid data graph from folder <dataset_path>
+def mid_graph_read(dataset_path: str) -> nx.Graph:
     # Load graph from file
     base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     # print("base_path", base_path)
     # print(os.path.join(base_path, dataset_path, 'data_graph.gpickle.gz'))
     data_graph = nx.read_gpickle(os.path.join(base_path, dataset_path, 'mid_data_graph.gpickle.gz'))
     print(dataset_path, 'mid_data_graph.gpickle.gz', "loaded successfully!")
+    return data_graph
+
+
+# Read a index from folder <dataset_path>
+def index_read(dataset_path: str) -> list:
+    # Load graph from file
+    base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     json_file = open(os.path.join(base_path, dataset_path, 'index.json'), 'r')
     json_content = json_file.read()
     json_file.close()
     index_json = json.loads(json_content)
     print(dataset_path, 'index.json', "loaded successfully!")
-    return data_graph, index_json
+    return index_json
 
 
-# Save the mid graph and index
-def mid_graph_save(mid_data_graph: nx.Graph, index: list, dataset_path: str) -> bool:
+# Save the precomputed graph
+def mid_graph_save(mid_data_graph: nx.Graph, dataset_path: str) -> bool:
     create_folder(folder_name=dataset_path)
     base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     os.chdir(os.path.join(base_path, dataset_path))  # Switch path to the folder
     nx.write_gpickle(mid_data_graph, 'mid_data_graph.gpickle.gz')
     print(dataset_path, 'mid_data_graph.gpickle.gz', "saved successfully!")
+    return True
+
+
+# Save the index
+def index_save(index: list, dataset_path: str) -> bool:
+    create_folder(folder_name=dataset_path)
+    base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     index_json = json.dumps(index)
     json_file = open(os.path.join(base_path, dataset_path, 'index.json'), 'w')
     json_file.write(index_json)

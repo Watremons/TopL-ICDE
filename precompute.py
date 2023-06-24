@@ -1,15 +1,12 @@
 import math
-import time
 import networkx as nx
-# import multiprocessing
-# from functools import partial
 
 from utils.graphutils import compute_support, compute_influential_score
 from offline.partitioning import graph_partitioning
 
-R_MAX = 3
-# PRE_THETA_LIST = [0.1]
-PRE_THETA_LIST = [0.05, 0.08, 0.1]
+R_MAX = 2
+PRE_THETA_LIST = [0.08]
+# PRE_THETA_LIST = [0.05, 0.08, 0.1]
 BLOCK_SIZE = 4096
 ALL_KEYWORD_NUM = 1000
 
@@ -72,7 +69,7 @@ def compute_synopsis(node_index: int, data_graph: nx.Graph):
             data_graph.nodes[node_index]["R"][r]["Inf_ub"][theta_z] = sigma_z
 
 
-def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
+def execute_offline(data_graph: nx.Graph) -> nx.Graph:
     # 0. save the neighbors in vertex
     for i in data_graph.nodes:
         data_graph.nodes[i]["N"] = list(data_graph.neighbors(i))
@@ -82,23 +79,19 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
         if (node_index+1) % 100 == 0:
             print("BV and ub_sup for node", node_index+1, "in", data_graph.number_of_nodes(), "has neighbors", len(list(data_graph.neighbors(i))))
         compute_bv_and_ub_sup(node_index=i, data_graph=data_graph)
-    # pool = multiprocessing.Pool()
-    # partial_compute_bv_and_ub_sup = partial(compute_bv_and_ub_sup, data_graph=data_graph)
-    # pool.map(partial_compute_bv_and_ub_sup, data_graph.nodes)
-    # pool.close()
-    # pool.join()
+
     print("BV and ub_sup is computed")
     # 3. compute r-hop and R for each r in [1, r_max] and each vertex
     for node_index, i in enumerate(data_graph.nodes):
         if (node_index+1) % 100 == 0:
             print("BV_r, ub_sup_r and Inf_ub for node", node_index+1, "in", data_graph.number_of_nodes())
         compute_synopsis(node_index=i, data_graph=data_graph)
-    # pool = multiprocessing.Pool()
-    # partial_compute_synopsis = partial(compute_synopsis, data_graph=data_graph)
-    # pool.map(partial_compute_synopsis, data_graph.nodes)
-    # pool.close()
-    # pool.join()
+
     print("Synopsis for each vertex is computed")
+    return data_graph
+
+
+def construct_index(data_graph: nx.Graph) -> list:
     # 4. compute the child num for each partition: (4K - size of R) / size of pointers
     num_partition = 32
     # 5. partitioning the graph and contructing the index
@@ -107,7 +100,7 @@ def execute_offline(data_graph: nx.Graph) -> (nx.Graph, list):
     index_root = graph_partitioning(data_graph=data_graph, num_partition=math.floor(num_partition/2), level=0)
     print("Graph index is computed")
     # print("index_root", index_root)
-    return data_graph, index_root
+    return index_root
 
 
 if __name__ == "__main__":
