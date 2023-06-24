@@ -44,6 +44,11 @@ python main.py -i dataset/manual/50000-212790-1000-2/gauss -Q 1,2,3,4,5 -k 4 -r 
 python main.py -i dataset/manual/50000-212790-1000-2/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 
 # done
+python main.py -i dataset/manual/50000-212790-1000-3 -Q 1,2,3,4,5 -k 5 -r 3 -t 0.1 -L 5
+python main.py -i dataset/manual/50000-212790-1000-3/gauss -Q 1,2,3,4,5 -k 5 -r 3 -t 0.1 -L 5
+python main.py -i dataset/manual/50000-212790-1000-3/zipf -Q 1,2,3,4,5 -k 5 -r 3 -t 0.1 -L 5
+
+# done
 python main.py -i dataset/manual/50000-212790-1000-4 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 python main.py -i dataset/manual/50000-212790-1000-4/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 python main.py -i dataset/manual/50000-212790-1000-4/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
@@ -63,23 +68,23 @@ python main.py -i dataset/manual/50000-212790-5000-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0
 python main.py -i dataset/manual/50000-212790-5000-3/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 python main.py -i dataset/manual/50000-212790-5000-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 
-# doing
+# done
 python main.py -i dataset/manual/100000-426096-1000-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 python main.py -i dataset/manual/100000-426096-1000-3/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 python main.py -i dataset/manual/100000-426096-1000-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 
-# yyx
+# done
 python main.py -i dataset/manual/500000-2129290-1000-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 python main.py -i dataset/manual/500000-2129290-1000-3/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 python main.py -i dataset/manual/500000-2129290-1000-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 
-# yyx
+# done
 python main.py -i dataset/manual/1000000-4259490-1000-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 python main.py -i dataset/manual/1000000-4259490-1000-3/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 python main.py -i dataset/manual/1000000-4259490-1000-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 
 # realworld result
-# doing & fyh
+# done
 python main.py -i dataset/realworld/dblp_simple/317080-1049866-1000-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
 # done
 python main.py -i dataset/realworld/amazon_simple/334863-925872-1000-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.08 -L 5
