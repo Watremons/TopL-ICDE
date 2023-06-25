@@ -1,8 +1,7 @@
-import math
 import networkx as nx
 
 from utils.graphutils import compute_support, compute_influential_score
-from offline.partitioning import graph_partitioning
+from offline.partitioning import compute_sorted_node_list, graph_partitioning, node_list_split
 
 R_MAX = 2
 PRE_THETA_LIST = [0.08]
@@ -92,12 +91,15 @@ def execute_offline(data_graph: nx.Graph) -> nx.Graph:
 
 
 def construct_index(data_graph: nx.Graph) -> list:
-    # 4. compute the child num for each partition: (4K - size of R) / size of pointers
-    num_partition = 32
+    # 4. compute the child num for each partition
+    num_partition = 16
+    # 5. compute the sorted node list with data
+    sorted_node_list = compute_sorted_node_list(data_graph=data_graph)
+    # for node in sorted_node_list:
+    #      print(node)
     # 5. partitioning the graph and contructing the index
-    print("partition raw num", math.floor((BLOCK_SIZE - R_MAX * ((ALL_KEYWORD_NUM*10/8) + 8 + len(PRE_THETA_LIST)*8*2)) / 8))
-    print("partition num", math.floor(num_partition/2))
-    index_root = graph_partitioning(data_graph=data_graph, num_partition=math.floor(num_partition/2), level=0)
+    # index_root = graph_partitioning(data_graph=data_graph, num_partition=num_partition, level=0)
+    index_root = node_list_split(node_list=sorted_node_list, num_partition=num_partition, level=0)
     print("Graph index is computed")
     # print("index_root", index_root)
     return index_root
