@@ -119,12 +119,11 @@ def compute_influential_score(seed_community: nx.Graph, data_graph: nx.Graph, th
                 for (score, idx) in to_traverse:
                     if idx == node_neighbor and ((-1)*score) < data_graph.edges[node, node_neighbor]['weight']:
                         to_traverse.remove((score, node_neighbor))
-                        to_traverse.append(((-1)*data_graph.edges[node, node_neighbor]['weight'], node_neighbor))
+                        heapq.heappush(to_traverse, ((-1)*data_graph.edges[node, node_neighbor]['weight'], node_neighbor))
                         flag = True
                         break
                 if not flag and data_graph.edges[node, node_neighbor]['weight'] > threshold:
-                    to_traverse.append(((-1)*data_graph.edges[node, node_neighbor]['weight'], node_neighbor))
-    heapq.heapify(to_traverse)  # keep a maximum heap
+                    heapq.heappush(to_traverse, ((-1)*data_graph.edges[node, node_neighbor]['weight'], node_neighbor))
     # print("to_traverse", to_traverse)
     # 1. do dijkstra until there is no edge to go
     while len(to_traverse) > 0:
