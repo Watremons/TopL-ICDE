@@ -96,8 +96,7 @@ def result_graph_save(result_graph: list, dataset_path: str) -> bool:
     create_folder(folder_name=dataset_path)
     base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     os.chdir(os.path.join(base_path, dataset_path))  # Switch path to the folder
-    for idx, result in enumerate(result_graph):
-        nx.write_gpickle(result_graph, 'result_graph' + str(idx) + '.gpickle.gz')
+    nx.write_gpickle(result_graph, 'result_graph_list.gpickle.gz')
     return True
 
 
@@ -113,6 +112,17 @@ def statistic_file_save(stat, dataset_path: str) -> bool:
     return True
 
 
+def read_graph_simple(graph_path: str) -> nx.Graph:
+    data_graph = nx.read_gpickle(graph_path)
+    return data_graph
+
+
 if __name__ == "__main__":
-    dataset_path = os.path.join("dataset", "manual", "50000-124933-1000-3")
-    data_graph, index_root = data_graph_read(dataset_path=dataset_path)
+    data_graph_list = read_graph_simple(graph_path=os.path.join(os.path.dirname(__file__), "result_graph0.gpickle.gz"))
+    BV_list = []
+    for graph in data_graph_list:
+        print(graph)
+        bv_g = set()
+        for node in graph.nodes(data=True):
+            print(node[0], node[1]["keywords"])
+            # print(node[0], bin(node[1]["BV"]))
