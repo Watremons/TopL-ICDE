@@ -60,9 +60,7 @@ if __name__ == "__main__":
     stat.leaf_node_counter = count_leaf_node(index_root)
     stat.solver_result = list(result_set)
     for result in result_set:
-        print(result)
-        print(result[0])
-        print(result[1])
+        print(result[0], "with score:", result[1])
     result_graph_save(result_graph=[result[0] for result in result_set], dataset_path=args.input)
     statistic_file_save(stat=stat, dataset_path=args.input)
     print(stat.generate_stat_result())
