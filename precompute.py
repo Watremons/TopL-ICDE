@@ -1,11 +1,11 @@
 import networkx as nx
 
 from utils.graphutils import compute_support, compute_influential_score
-from offline.partitioning import compute_sorted_node_list, graph_partitioning, node_list_split
+from offline.partitioning import compute_sorted_node_list, node_list_split
 
 R_MAX = 2
-PRE_THETA_LIST = [0.08]
-# PRE_THETA_LIST = [0.05, 0.08, 0.1]
+# PRE_THETA_LIST = [0.1, 0.2, 0.3]
+PRE_THETA_LIST = [0.2]
 BLOCK_SIZE = 4096
 ALL_KEYWORD_NUM = 1000
 
@@ -41,6 +41,7 @@ def compute_bv_and_ub_sup(node_index: int, data_graph: nx.Graph):
             data_graph.edges[u, v]["ub_sup"] = 0
         if data_graph.edges[u, v]["ub_sup"] < hop_v_r_max_with_support.edges[u, v]["ub_sup"]:
             data_graph.edges[u, v]["ub_sup"] = hop_v_r_max_with_support.edges[u, v]["ub_sup"]
+    # print("ub_sup is", data_graph.edges[u, v]["ub_sup"])
 
 
 def compute_synopsis(node_index: int, data_graph: nx.Graph):

@@ -8,8 +8,8 @@ from online.statistics import Statistics
 
 SEED = 2023
 R_MAX = 2
-# PRE_THETA_LIST = [0.05, 0.08, 0.1]
-PRE_THETA_LIST = [0.08]
+# PRE_THETA_LIST = [0.1, 0.2, 0.3]
+PRE_THETA_LIST = [0.2]
 
 
 def is_pass_pruning_entry(entry: dict, radius: int, query_bv: int, query_support: int, theta_z: float, sigma_L: float):
@@ -110,26 +110,26 @@ def execute_online(
         for child_entry in now_entry.index_N['P']:
             if child_entry['T']:  # N is a leaf node with child entry made by vertex
                 leaf_node_start_timestamp = time.time()
-                if is_pass_pruning_entry(entry=child_entry, radius=radius_r_idx, query_bv=q_bv, query_support=query_support_k, theta_z=theta_z, sigma_L=sigma_L):  # check the community-level pruning
+                if is_pass_pruning_entry(entry=child_entry, radius=radius_r_idx, query_bv=q_bv, query_support=query_support_k-2, theta_z=theta_z, sigma_L=sigma_L):  # check the community-level pruning
                     compute_r_hop_start_timestamp = time.time()
                     # hop_v_i_r = nx.ego_graph(G=data_graph, n=child_entry["P"], radius=radius_r, center=True)
                     hop_v_i_r = compute_hop_v_r(graph=data_graph, node_v=child_entry["P"], radius=radius_r)
                     stat.compute_r_hop_time += (time.time() - compute_r_hop_start_timestamp)
                     compute_k_truss_start_timestamp = time.time()
-                    # seed_community_g = compute_k_truss(graph=hop_v_i_r, k=query_support_k)  # get all k-truss from hop_v_i_r
+                    # seed_community_g = compute_k_truss(graph=hop_v_i_r, k=query_support_k-2)  # get all k-truss from hop_v_i_r
                     seed_community_g = nx.k_truss(G=hop_v_i_r, k=query_support_k)
                     if max_k_truss_cost < (time.time() - compute_k_truss_start_timestamp):
                         max_k_truss_cost = (time.time() - compute_k_truss_start_timestamp)
                     stat.compute_k_truss_time += (time.time() - compute_k_truss_start_timestamp)
                     if seed_community_g.number_of_nodes() == 0 or seed_community_g.nodes in [result[0].nodes for result in result_set_S]:  # Delete the same community
                         continue
-                    # flag = True
-                    # for vertex in seed_community_g.nodes(data=True):
-                    #     if q_bv & vertex[1]["BV"] == 0:
-                    #         flag = False
-                    #         break
-                    # if not flag:
-                    #     continue
+                    flag = True
+                    for vertex in seed_community_g.nodes(data=True):
+                        if q_bv & vertex[1]["BV"] == 0:
+                            flag = False
+                            break
+                    if not flag:
+                        continue
                     # bv_g = 0
                     # for vertex in seed_community_g.nodes(data=True):
                     #     bv_g = bv_g | vertex[1]["BV"]
@@ -161,7 +161,7 @@ def execute_online(
                 stat.leaf_node_traverse_time += (time.time() - leaf_node_start_timestamp)
             else:  # N is non-leaf node with child entry made by index node
                 nonleaf_node_start_timestamp = time.time()
-                if is_pass_pruning_entry(entry=child_entry, radius=radius_r_idx, query_bv=q_bv, query_support=query_support_k, theta_z=theta_z, sigma_L=sigma_L):  # check the community-level pruning
+                if is_pass_pruning_entry(entry=child_entry, radius=radius_r_idx, query_bv=q_bv, query_support=query_support_k-2, theta_z=theta_z, sigma_L=sigma_L):  # check the community-level pruning
                     heapq.heappush(max_heap_H, IndexEntry((-1)*child_entry["R"][radius_r_idx]["Inf_ub"][str(theta_z)], child_entry, idx))
                     if len(child_entry["P"]) == 0 or child_entry["P"][0]["T"]:
                         leaf_node_visit_counter += 1

@@ -3,8 +3,8 @@ import pymetis
 import networkx as nx
 
 R_MAX = 2
-# PRE_THETA_LIST = [0.05, 0.08, 0.1]
-PRE_THETA_LIST = [0.08]
+# PRE_THETA_LIST = [0.1, 0.2, 0.3]
+PRE_THETA_LIST = [0.2]
 
 
 def graph_partitioning(data_graph: nx.Graph, num_partition: int, level: int) -> list:
@@ -131,7 +131,7 @@ def node_list_split(node_list: list, num_partition: int, level: int) -> list:
         # 3.1. extract nodes of this partition and compute its adjacency_list
         part_node_array = splited_node_array_list[i]
         # 3.2. Traverse to the subgraph of this partition,return the aggregated synopsis
-        child_entry_list = node_list_split(node_list=list(part_node_array), num_partition=num_partition, level=level+1)
+        child_entry_list = node_list_split(node_list=part_node_array.tolist(), num_partition=num_partition, level=level+1)
         # data form as follows:
         # [{
         #     "P": index_node,

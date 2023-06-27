@@ -29,40 +29,34 @@ def replace_keywords(dataset: str, distribution: str):
         keywords_set = zipf_dist.rvs(size * per_vertex_keyword)
     elif distribution == "gauss":
         # Gaussian
-        mean = 500  # 均值
-        stddev = 150  # 标准差
-        if all_keywords_num == 100:
-            mean = 50  # 均值
-            stddev = 15  # 标准差
-        elif all_keywords_num == 500:
-            mean = 250  # 均值
-            stddev = 75  # 标准差
-        elif all_keywords_num == 800:
-            mean = 400  # 均值
-            stddev = 120  # 标准差
-        elif all_keywords_num == 1000:
-            mean = 500  # 均值
-            stddev = 150  # 标准差
-        elif all_keywords_num == 2000:
-            mean = 1000  # 均值
-            stddev = 300  # 标准差
-        elif all_keywords_num == 5000:
-            mean = 2500  # 均值
-            stddev = 750  # 标准差
+        mean = 10  # 均值
+        stddev = 3  # 标准差
+        if all_keywords_num == 10:
+            mean = 5  # 均值
+            stddev = 1.5  # 标准差
+        elif all_keywords_num == 20:
+            mean = 10  # 均值
+            stddev = 3  # 标准差
+        elif all_keywords_num == 50:
+            mean = 25  # 均值
+            stddev = 7.5  # 标准差
+        elif all_keywords_num == 80:
+            mean = 40  # 均值
+            stddev = 12  # 标准差
         size = target_graph.number_of_nodes()
         keywords_set = np.random.normal(mean, stddev, size)
     keywords_set = np.clip(keywords_set, 0, all_keywords_num-1).astype(int)
 
     label_counter = [0 for _ in range(all_keywords_num)]
     for i, node in enumerate(target_graph):
-        keyword_num = np.random.randint(max(per_vertex_keyword-1, 0), per_vertex_keyword+2)  # the num is key_per ± 1
+        keyword_num = np.random.randint(max(per_vertex_keyword-1, 1), per_vertex_keyword+2)  # the num is key_per ± 1
 
         keywords = np.random.choice(keywords_set, keyword_num)
         while len(set(keywords)) != len(keywords):
             keywords = np.random.choice(keywords_set, keyword_num)
         for keyword in keywords:
             label_counter[keyword] += 1
-        target_graph.nodes[node]['name'] = keywords
+        target_graph.nodes[node]['keywords'] = keywords
 
     print(max(keywords_set))
     print(min(keywords_set))
@@ -76,21 +70,12 @@ def replace_keywords(dataset: str, distribution: str):
 
 
 if __name__ == "__main__":
-    # dataset = "1000-2473-100-3"
-    # dataset = "10000-24999-1000-3"
-    # dataset = "30000-74907-1000-3"
-    # dataset = "50000-124933-500-5"
-    # dataset = "50000-124933-800-5"
-    # dataset = "50000-124933-1000-1"
-    # dataset = "50000-124933-1000-2"
-    dataset = "50000-124933-1000-3"
-    # dataset = "50000-124933-1000-4"
-    # dataset = "50000-124933-1000-5"
-    # dataset = "50000-124933-2000-3"
-    # dataset = "50000-124933-5000-3"
-    # dataset = "100000-249940-1000-3"
-    # dataset = "500000-1249915-1000-3"
-    # dataset = "1000000-2500002-1000-3"
+    # dataset = "10000-28675-20-3"
+    # dataset = "25000-72201-20-3"
+    # dataset = "50000-145648-20-3"
+    # dataset = "100000-295840-20-3"
+    dataset = "500000-1616753-20-3"
+    # dataset = "1000000-3500118-20-3"
     replace_keywords(
         dataset=dataset,
         distribution="gauss"
