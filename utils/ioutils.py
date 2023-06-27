@@ -2,6 +2,18 @@ import os
 import json
 import time
 import networkx as nx
+import numpy as np
+
+
+class JsonEncoder(json.JSONEncoder):
+    """Convert numpy classes to JSON serializable objects."""
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
 
 
 def is_precomputed(dataset_path: str) -> bool:
@@ -83,7 +95,8 @@ def mid_graph_save(mid_data_graph: nx.Graph, dataset_path: str) -> bool:
 def index_save(index: list, dataset_path: str) -> bool:
     create_folder(folder_name=dataset_path)
     base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-    index_json = json.dumps(index)
+    # print(index)
+    index_json = json.dumps(index, cls=JsonEncoder)
     json_file = open(os.path.join(base_path, dataset_path, 'index.json'), 'w')
     json_file.write(index_json)
     json_file.close()
@@ -104,7 +117,7 @@ def result_graph_save(result_graph: list, dataset_path: str) -> bool:
 def statistic_file_save(stat, dataset_path: str) -> bool:
     create_folder(folder_name=dataset_path)
     base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-    stat_file = 'statistics-' + time.strftime('%m%d-%H%M%S', time.localtime()) + '.txt'
+    stat_file = 'statistics-' + time.strftime('%m%d-%H%M%S', time.localtime()) + "-" + str(time.time()) + '.txt'
     result_stat_file = open(os.path.join(base_path, dataset_path, stat_file), 'w')
     result_stat_file.write(stat.generate_stat_result())
     result_stat_file.close()
