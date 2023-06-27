@@ -47,7 +47,7 @@ def generate_dataset(seed: int, keywords_per_vertex_num: int, all_keyword_num: i
     keywords_set = range(0, all_keyword_num)
     label_counter = [0 for _ in range(all_keyword_num)]
     for i in target_graph.nodes:
-        keyword_num = np.random.randint(max(keywords_per_vertex_num-1, 0), keywords_per_vertex_num+2)  # the num is key_per ± 1
+        keyword_num = np.random.randint(max(keywords_per_vertex_num-1, 1), keywords_per_vertex_num+2)  # the num is key_per ± 1
         keywords = random.sample(keywords_set, keyword_num)
         for keyword in keywords:
             label_counter[keyword] += 1
@@ -59,9 +59,8 @@ def generate_dataset(seed: int, keywords_per_vertex_num: int, all_keyword_num: i
     # TODO: 2.3. Add the weight (propagation probability) to each edge
     # WC model: pp(u, v) for an edge (u, v) is 1/d(v), where d(v) is the in-degree of v.
     for i in target_graph.nodes:
-        neighbors_num = len(list(target_graph.neighbors(i)))
         for neighbor in target_graph.neighbors(i):
-            target_graph.edges[i, neighbor]["weight"] = 1 / neighbors_num
+            target_graph.edges[i, neighbor]["weight"] = random.uniform(0.5, 0.6)
             # print(target_graph.get_edge_data(i, neighbor))
     # TRIVALENCY model: randomly select a probability from the set {0.1, 0.01, 0.001}
 
@@ -82,7 +81,7 @@ def generate_dataset_based_realworld(seed: int, all_keyword_num: int, keywords_p
     label_counter = [0 for _ in range(all_keyword_num)]
     for i in data_graph.nodes:
         data_graph.nodes[i].clear()
-        keyword_num = np.random.randint(max(keywords_per_vertex_num-1, 0), keywords_per_vertex_num+2)  # the num is key_per ± 1
+        keyword_num = np.random.randint(max(keywords_per_vertex_num-1, 1), keywords_per_vertex_num+2)  # the num is key_per ± 1
         keywords = random.sample(keywords_set, keyword_num)
         for keyword in keywords:
             label_counter[keyword] += 1
@@ -92,10 +91,9 @@ def generate_dataset_based_realworld(seed: int, all_keyword_num: int, keywords_p
     # TODO: 2.3. Add the weight (propagation probability) to each edge
     # WC model: pp(u, v) for an edge (u, v) is 1/d(v), where d(v) is the in-degree of v.
     for i in data_graph.nodes:
-        neighbors_num = len(list(data_graph.neighbors(i)))
         for neighbor in data_graph.neighbors(i):
             # data_graph.edges[i, neighbor].clear()
-            data_graph.edges[i, neighbor]["weight"] = 1 / neighbors_num
+            data_graph.edges[i, neighbor]["weight"] = random.uniform(0.5, 0.6)
             # print(data_graph.get_edge_data(i, neighbor))
     # TRIVALENCY model: randomly select a probability from the set {0.1, 0.01, 0.001}
 
@@ -146,7 +144,7 @@ if __name__ == "__main__":
     # )
     # generate_dataset(
     #     seed=seed,
-    #     keywords_per_vertex_num=5,  # 1, 2, 3, 4, 5
+    #     keywords_per_vertex_num=1,  # 1, 2, 3, 4, 5
     #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
     #     node_num=50000,  # 10K, 30K, 50K, 100K, 500K, 1M
     #     neighbor_num=5,
@@ -171,32 +169,20 @@ if __name__ == "__main__":
     # generate_dataset(
     #     seed=seed,
     #     keywords_per_vertex_num=3,  # 1, 2, 3, 4, 5
-    #     all_keyword_num=1000,  # 500, 800, 1K, 2K, 5K
+    #     all_keyword_num=50,  # 500, 800, 1K, 2K, 5K
     #     node_num=1000000,  # 10K, 30K, 50K, 100K, 500K, 1M
-    #     neighbor_num=5,
-    #     add_edge_probability=0.250185
+    #     neighbor_num=6,
+    #     add_edge_probability=0.166666
     # )
     # generate_dataset_based_realworld(
     #     seed=seed,
-    #     all_keyword_num=1000,
+    #     all_keyword_num=20,
     #     keywords_per_vertex_num=3,
     #     dataset="dblp"
     # )
-    # generate_dataset_based_realworld(
-    #     seed=seed,
-    #     all_keyword_num=1000,
-    #     keywords_per_vertex_num=3,
-    #     dataset="amazon"
-    # )
-    # generate_dataset_based_realworld(
-    #     seed=seed,
-    #     all_keyword_num=1000,
-    #     keywords_per_vertex_num=3,
-    #     dataset="epinions"
-    # )
-    # generate_dataset_based_realworld(
-    #     seed=seed,
-    #     all_keyword_num=1000,
-    #     keywords_per_vertex_num=3,
-    #     dataset="facebook"
-    # )
+    generate_dataset_based_realworld(
+        seed=seed,
+        all_keyword_num=20,
+        keywords_per_vertex_num=3,
+        dataset="amazon"
+    )
