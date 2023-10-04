@@ -24,29 +24,29 @@ python main.py -i dataset/manual/25000-72201-20-3/gauss -Q 1,2,3,4,5 -k 4 -r 2 -
 python main.py -i dataset/manual/25000-72201-20-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 
 # done
-python main.py -i dataset/manual/50000-145648-20-1 -Q 1,2,3,4,5 -k 5 -r 3 -t 0.3 -L 5
-python main.py -i dataset/manual/50000-145648-20-1/gauss -Q 1,2,3,4,5 -k 5 -r 2 -t 0.3 -L 5
-python main.py -i dataset/manual/50000-145648-20-1/zipf -Q 1,2,3,4,5 -k 5 -r 2 -t 0.3 -L 5
+python main.py -i dataset/manual/50000-145648-20-1 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/50000-145648-20-1/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/50000-145648-20-1/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 
 # done
-python main.py -i dataset/manual/50000-145648-20-2 -Q 1,2,3,4,5 -k 5 -r 3 -t 0.3 -L 5
-python main.py -i dataset/manual/50000-145648-20-2/gauss -Q 1,2,3,4,5 -k 5 -r 2 -t 0.3 -L 5
-python main.py -i dataset/manual/50000-145648-20-2/zipf -Q 1,2,3,4,5 -k 5 -r 2 -t 0.3 -L 5
+python main.py -i dataset/manual/50000-145648-20-2 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/50000-145648-20-2/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/50000-145648-20-2/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 
 # done
-python main.py -i dataset/manual/50000-145648-10-3 -Q 1,2,3,4,5 -k 5 -r 3 -t 0.3 -L 5
-python main.py -i dataset/manual/50000-145648-10-3/gauss -Q 1,2,3,4,5 -k 5 -r 2 -t 0.3 -L 5
-python main.py -i dataset/manual/50000-145648-10-3/zipf -Q 1,2,3,4,5 -k 5 -r 2 -t 0.3 -L 5
+python main.py -i dataset/manual/50000-145648-10-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/50000-145648-10-3/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/50000-145648-10-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 
 # done
-python main.py -i dataset/manual/50000-145648-20-3 -Q 1,2,3,4,5 -k 5 -r 3 -t 0.3 -L 5
-python main.py -i dataset/manual/50000-145648-20-3/gauss -Q 1,2,3,4,5 -k 5 -r 2 -t 0.3 -L 5
-python main.py -i dataset/manual/50000-145648-20-3/zipf -Q 1,2,3,4,5 -k 5 -r 2 -t 0.3 -L 5
+python main.py -i dataset/manual/50000-145648-20-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/50000-145648-20-3/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/50000-145648-20-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 
 # done
-python main.py -i dataset/manual/50000-145648-50-3 -Q 1,2,3,4,5 -k 5 -r 3 -t 0.3 -L 5
-python main.py -i dataset/manual/50000-145648-50-3/gauss -Q 1,2,3,4,5 -k 5 -r 2 -t 0.3 -L 5
-python main.py -i dataset/manual/50000-145648-50-3/zipf -Q 1,2,3,4,5 -k 5 -r 2 -t 0.3 -L 5
+python main.py -i dataset/manual/50000-145648-50-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/50000-145648-50-3/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/50000-145648-50-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 
 # done
 python main.py -i dataset/manual/50000-145648-80-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
@@ -69,6 +69,11 @@ python main.py -i dataset/manual/100000-295840-20-3/gauss -Q 1,2,3,4,5 -k 4 -r 2
 python main.py -i dataset/manual/100000-295840-20-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 
 # done
+python main.py -i dataset/manual/250000-768545-20-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/250000-768545-20-3/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/manual/250000-768545-20-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+
+# done
 python main.py -i dataset/manual/500000-1616753-20-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 python main.py -i dataset/manual/500000-1616753-20-3/gauss -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 python main.py -i dataset/manual/500000-1616753-20-3/zipf -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
@@ -81,8 +86,10 @@ python main.py -i dataset/manual/1000000-3500118-20-3/zipf -Q 1,2,3,4,5 -k 4 -r 
 # realworld result
 # done
 python main.py -i dataset/realworld/dblp/317080-1049866-20-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/realworld/dblp_simple/317080-1049866-1000-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 # done
 python main.py -i dataset/realworld/amazon/334863-925872-20-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
+python main.py -i dataset/realworld/amazon_simple/317080-1049866-1000-3 -Q 1,2,3,4,5 -k 4 -r 2 -t 0.2 -L 5
 ```
 
 ## Reference

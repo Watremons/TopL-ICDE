@@ -130,6 +130,7 @@ dmypy.json
 
 # Dataset
 /dataset
+/result
 /dataset-5
 /dataset-cut
 /dataset_backup
