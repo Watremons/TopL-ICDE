@@ -1,5 +1,5 @@
 import time
-import random
+import numpy as np
 import os
 import networkx as nx
 
@@ -20,13 +20,10 @@ def execute_baseline(
 ) -> list:
     # 0. Sample nodes from the whole map following Uniform distribution
     result_set_S = set()
-    sample_node_index_list = random.sample(data_graph.nodes)
-    # 0.1 hash the query keywords set Q
-    q_bv = 0
-    for keyword in query_keyword_Q:
-        q_bv = q_bv | (1 << keyword)
-    radius_r_idx = radius_r - 1
-    for node in sample_node_index_list:
+    sample_vertices_index_list = np.random.choice(data_graph.nodes, data_graph.number_of_nodes()//1000, replace=False)
+    # sample_vertices_index_list = list(data_graph.nodes)
+    for node in sample_vertices_index_list:
+        # print("Now node:", node)
         # 1. compute hop(node, radius_r)
         compute_r_hop_start_timestamp = time.time()
         hop_node_r = nx.ego_graph(G=data_graph, n=node, radius=radius_r, center=True)
@@ -41,7 +38,7 @@ def execute_baseline(
         # 3. check the keywords
         flag = True
         for node in seed_community_g.nodes(data=True):
-            if node["R"][radius_r_idx]["BV"] & q_bv == 0:
+            if set(node[1]["keywords"]) & set(query_keyword_Q) == 0:
                 flag = False
                 break
         if not flag:
@@ -53,9 +50,10 @@ def execute_baseline(
         # 5. add result to set
         modify_result_set_start_timestamp = time.time()
         result_set_S.add((seed_community_g, sigma_g))
+        # print("Add:", (seed_community_g, sigma_g))
         stat.modify_result_set_time += (time.time() - modify_result_set_start_timestamp)
 
-    return list(result_set_S).sort(key=lambda s: s[1], reverse=True)[0:query_L]
+    return sorted(list(result_set_S), key=lambda s: s[1], reverse=True)[0:query_L]
 
 
 if __name__ == "__main__":
@@ -84,9 +82,7 @@ if __name__ == "__main__":
     stat.finish_timestamp = time.time()
     stat.solver_result = list(result_set)
     for result in result_set:
-        print(result)
-        print(result[0])
-        print(result[1])
+        print(result[0], result[1])
     result_graph_save(result_graph=[result[0] for result in result_set], dataset_path=os.path.join(args.input, 'baseline'))
     statistic_file_save(stat=stat, dataset_path=os.path.join(args.input, 'baseline'))
     print(stat.generate_stat_result())
