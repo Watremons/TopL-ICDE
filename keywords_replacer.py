@@ -72,15 +72,23 @@ def replace_keywords(dataset: str, distribution: str):
 if __name__ == "__main__":
     # dataset = "10000-28675-20-3"
     # dataset = "25000-72201-20-3"
-    # dataset = "50000-145648-20-3"
+    # dataset = "50000-145648-10-3"
+    # dataset = "50000-145648-20-1"
+    # dataset = "50000-145648-20-2"
+    dataset = "50000-145648-20-3"
+    # dataset = "50000-145648-20-4"
+    # dataset = "50000-145648-20-5"
+    # dataset = "50000-145648-50-3"
+    # dataset = "50000-145648-80-3"
     # dataset = "100000-295840-20-3"
-    dataset = "500000-1616753-20-3"
+    # dataset = "250000-768545-20-3"
+    # dataset = "500000-1616753-20-3"
     # dataset = "1000000-3500118-20-3"
     replace_keywords(
         dataset=dataset,
         distribution="gauss"
     )
-    replace_keywords(
-        dataset=dataset,
-        distribution="zipf"
-    )
+    # replace_keywords(
+    #     dataset=dataset,
+    #     distribution="zipf"
+    # )
