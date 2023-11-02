@@ -64,7 +64,8 @@ def mid_graph_read(dataset_path: str) -> nx.Graph:
     base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     # print("base_path", base_path)
     # print(os.path.join(base_path, dataset_path, 'data_graph.gpickle.gz'))
-    data_graph = nx.read_gpickle(os.path.join(base_path, dataset_path, 'mid_data_graph.gpickle.gz'))
+    data_graph = nx.readwrite.read_gpickle(os.path.join(base_path, dataset_path, 'mid_data_graph.gpickle.gz'))
+    # data_graph = nx.read_gpickle(os.path.join(base_path, dataset_path, 'mid_data_graph.gpickle.gz'))
     print(dataset_path, 'mid_data_graph.gpickle.gz', "loaded successfully!")
     return data_graph
 
