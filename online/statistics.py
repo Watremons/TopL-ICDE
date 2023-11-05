@@ -19,11 +19,13 @@ class Statistics:
     def __init__(
         self,
         input_file_folder: str,
+        diversity: bool,
         query_keyword_Q: list,
         query_support_k: int,
         radius_r: int,
         threshold_theta: float,
-        query_L: int
+        query_L: int,
+        nlparam: int
     ) -> None:
         """
         Method:
@@ -45,11 +47,13 @@ class Statistics:
         self.all_keywords_num = input_info[-2]
         self.keywords_per_vertex = input_info[-1]
         self.distribution = distribution
+        self.diversity = diversity
         self.query_keyword_Q = query_keyword_Q
         self.query_support_k = query_support_k
         self.radius_r = radius_r
         self.threshold_theta = threshold_theta
         self.query_L = query_L
+        self.nlparam = nlparam
 
         self.start_timestamp = 0
         self.finish_timestamp = 0
@@ -61,6 +65,8 @@ class Statistics:
         self.compute_k_truss_time = 0
         self.compute_influential_score_time = 0
         self.modify_result_set_time = 0
+        self.refinement_increment_compute_time = 0
+        self.refinement_increment_compute_count = 0
 
         self.vertex_pruning_counter = 0
         self.entry_pruning_counter = 0
@@ -101,6 +107,9 @@ class Statistics:
         result += "Leaf Nodes: {}\n".format(self.leaf_node_counter)
         result += "Pruning Leaf Nodes: {}\n".format(self.leaf_node_counter - self.leaf_node_visit_counter)
         result += "\n"
+        result += "-------------REFINE INFO-------------\n"
+        result += "Refine Type: {}\n".format("Diversity" if self.diversity else "Naive")
+        result += "Query n: {}\n".format(self.nlparam)
         result += "-------------TIME INFO-------------\n"
         result += "Started at: {} \tFinished at: {}\n".format(self.start_timestamp, self.finish_timestamp)
         result += "Total time: {}\n".format(self.finish_timestamp - self.start_timestamp)
@@ -110,5 +119,6 @@ class Statistics:
         result += "Compute R-Hop time: {}\n".format(self.compute_r_hop_time)
         result += "Compute K-Truss time: {}\n".format(self.compute_k_truss_time)
         result += "Compute Influential Score time: {}\n".format(self.compute_influential_score_time)
+        result += "Refinement Increment Compute Time: {} for {} times\n".format(self.refinement_increment_compute_time, self.refinement_increment_compute_count)
         result += "Modify Result Set time: {}\n".format(self.modify_result_set_time)
         return result
