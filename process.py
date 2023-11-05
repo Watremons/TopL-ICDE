@@ -66,6 +66,7 @@ def execute_online(
     radius_r: int,
     threshold_theta: float,
     query_L: int,
+    nlparam: int,
     index_root: list,
     stat: Statistics
 ) -> list:
@@ -89,7 +90,8 @@ def execute_online(
     max_heap_H = []  # set value to -1*value to use the heapq
     for idx, entry in enumerate(index_root):
         heapq.heappush(max_heap_H, IndexEntry(key=(-1)*entry["R"][radius_r_idx]["Inf_ub"][str(theta_z)], index_N=entry, idx=idx))
-    radius_r_idx = radius_r - 1
+    # 0.6 set the L to n*L
+    query_nL = nlparam * query_L
     vertex_pruning_counter = 0
     leaf_node_visit_counter = 0
     entry_pruning_counter = 0
@@ -143,9 +145,9 @@ def execute_online(
                     stat.compute_influential_score_time += (time.time() - compute_influential_score_start_timestamp)
                     modify_result_set_start_timestamp = time.time()
                     # print(seed_community_g)
-                    if len(result_set_S) < query_L:  # add to result set if size is less than L
+                    if len(result_set_S) < query_nL:  # add to result set if size is less than L
                         result_set_S.add((seed_community_g, sigma_g))
-                        if len(result_set_S) == query_L:
+                        if len(result_set_S) == query_nL:
                             _, min_sigma = min_score_entry(result_set_S)
                             sigma_L = min_sigma
                             # print("Now got Top L and sigma_L is", sigma_L)
