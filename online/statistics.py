@@ -65,6 +65,7 @@ class Statistics:
         self.compute_k_truss_time = 0
         self.compute_influential_score_time = 0
         self.modify_result_set_time = 0
+        self.select_greatest_increment_entry_time = 0
         self.refinement_increment_compute_time = 0
         self.refinement_increment_compute_count = 0
 
@@ -119,6 +120,7 @@ class Statistics:
         result += "Compute R-Hop time: {}\n".format(self.compute_r_hop_time)
         result += "Compute K-Truss time: {}\n".format(self.compute_k_truss_time)
         result += "Compute Influential Score time: {}\n".format(self.compute_influential_score_time)
+        result += "Select Greatest Increment Entry in Heap time: {}\n".format(self.select_greatest_increment_entry_time)
         result += "Refinement Increment Compute Time: {} for {} times\n".format(self.refinement_increment_compute_time, self.refinement_increment_compute_count)
         result += "Modify Result Set time: {}\n".format(self.modify_result_set_time)
         return result
