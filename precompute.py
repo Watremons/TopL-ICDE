@@ -65,7 +65,7 @@ def compute_synopsis(node_index: int, data_graph: nx.Graph):
         # 3.3 compute influential score of hop(v_i,r) for each theta
         # last_sigma_z = 0
         for theta_z in reversed(PRE_THETA_LIST):
-            sigma_z = compute_influential_score(seed_community=hop_v_r, data_graph=data_graph, threshold=theta_z)
+            sigma_z, _ = compute_influential_score(seed_community=hop_v_r, data_graph=data_graph, threshold=theta_z)
             data_graph.nodes[node_index]["R"][r]["Inf_ub"][theta_z] = sigma_z
 
 

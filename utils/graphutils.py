@@ -107,9 +107,12 @@ def compute_k_truss(graph: nx.Graph, k: int) -> nx.Graph:
 
 
 # Compute the influential score
-def compute_influential_score(seed_community: nx.Graph, data_graph: nx.Graph, threshold: float) -> float:
+def compute_influential_score(seed_community: nx.Graph, data_graph: nx.Graph, threshold: float) -> (float, nx.Graph):
     # 0. obtain the nodes used in first turn
     propagation_probability_dict = dict()  # save the distance at each moment
+    # for node_idx in seed_community.nodes:
+    #     print(node_idx)
+    #     propagation_probability_dict[node_idx] = 1
     to_traverse = []  # save the to do vertices next turn (distance, node_index)
     for node in seed_community.nodes:
         for node_neighbor in data_graph.neighbors(node):
@@ -148,8 +151,12 @@ def compute_influential_score(seed_community: nx.Graph, data_graph: nx.Graph, th
     # print(seed_community.nodes)
     # print(data_graph.edges)
     # print(propagation_probability_dict)
+    influenced_community_g_inf = data_graph.subgraph(propagation_probability_dict.keys()).copy()
+    # print("influenced_community_g_inf", influenced_community_g_inf.nodes(data=True))
     influential_score = 0
     for (node_index, propagation_probability) in propagation_probability_dict.items():
         influential_score = influential_score + propagation_probability
+        influenced_community_g_inf.nodes[node_index]['influential_score'] = propagation_probability
     # print("influential_score", influential_score)
-    return influential_score
+    # print("influenced_community_g_inf", influenced_community_g_inf.nodes(data=True))
+    return influential_score, influenced_community_g_inf

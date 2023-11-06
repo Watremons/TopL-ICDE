@@ -45,7 +45,7 @@ def execute_baseline(
             continue
         # 4. compute influential scores
         compute_influential_score_start_timestamp = time.time()
-        sigma_g = compute_influential_score(seed_community=seed_community_g, data_graph=data_graph, threshold=threshold_theta)
+        sigma_g, _ = compute_influential_score(seed_community=seed_community_g, data_graph=data_graph, threshold=threshold_theta)
         stat.compute_influential_score_time += (time.time() - compute_influential_score_start_timestamp)
         # 5. add result to set
         modify_result_set_start_timestamp = time.time()

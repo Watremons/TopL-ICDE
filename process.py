@@ -52,11 +52,12 @@ class IndexEntry:
 def min_score_entry(entry_set: set):
     min_seed_community = ""
     min_sigma = float("inf")
-    for (seed_community_g, sigma_g) in entry_set:
+    for (seed_community_g, sigma_g, influenced_community_g_inf) in entry_set:
         if sigma_g < min_sigma:
             min_sigma = sigma_g
             min_seed_community = seed_community_g
-    return min_seed_community, min_sigma
+            min_influenced_community_g_inf = influenced_community_g_inf
+    return min_seed_community, min_sigma, min_influenced_community_g_inf
 
 
 def execute_online(
@@ -139,25 +140,25 @@ def execute_online(
                     #     continue
                     vertex_pruning_counter += 1
                     compute_influential_score_start_timestamp = time.time()
-                    sigma_g = compute_influential_score(seed_community=seed_community_g, data_graph=data_graph, threshold=threshold_theta)
+                    sigma_g, influenced_community_g_inf = compute_influential_score(seed_community=seed_community_g, data_graph=data_graph, threshold=threshold_theta)
                     if max_influential_score_cost < (time.time() - compute_influential_score_start_timestamp):
                         max_influential_score_cost = (time.time() - compute_influential_score_start_timestamp)
                     stat.compute_influential_score_time += (time.time() - compute_influential_score_start_timestamp)
                     modify_result_set_start_timestamp = time.time()
                     # print(seed_community_g)
                     if len(result_set_S) < query_nL:  # add to result set if size is less than L
-                        result_set_S.add((seed_community_g, sigma_g))
+                        result_set_S.add((seed_community_g, sigma_g, influenced_community_g_inf))
                         if len(result_set_S) == query_nL:
-                            _, min_sigma = min_score_entry(result_set_S)
+                            _, min_sigma, _ = min_score_entry(result_set_S)
                             sigma_L = min_sigma
                             # print("Now got Top L and sigma_L is", sigma_L)
                     else:  # if size is greater than L
                         if sigma_g > sigma_L:  # add to result set and remove the smallest one
                             # print("Now got new top L", sigma_g, " and sigma_L is", sigma_L)
-                            result_set_S.add((seed_community_g, sigma_g))
-                            min_seed_community, min_sigma = min_score_entry(result_set_S)
+                            result_set_S.add((seed_community_g, sigma_g, influenced_community_g_inf))
+                            min_seed_community, min_sigma, influenced_community_g_inf = min_score_entry(result_set_S)
                             sigma_L = min_sigma
-                            result_set_S.remove((min_seed_community, min_sigma))
+                            result_set_S.remove((min_seed_community, min_sigma, influenced_community_g_inf))
                     stat.modify_result_set_time += (time.time() - modify_result_set_start_timestamp)
 
                 stat.leaf_node_traverse_time += (time.time() - leaf_node_start_timestamp)
@@ -177,6 +178,11 @@ def execute_online(
     stat.leaf_node_visit_counter = leaf_node_visit_counter
     print("Max k truss cost:", max_k_truss_cost)
     print("Max score cost:", max_influential_score_cost)
+
+    # print(data_graph.nodes(data=True))
+    for seed_community in result_set_S:
+        print(seed_community[0].nodes)
+
     return result_set_S
 
 
