@@ -6,6 +6,7 @@ from online.statistics import Statistics
 from precompute import execute_offline, construct_index
 from process import execute_online
 from refine import execute_refine
+from refine_baseline import execute_refine_optimal, execute_refine_without_pruning
 
 
 def count_leaf_node(now_index):
@@ -29,7 +30,9 @@ if __name__ == "__main__":
         threshold_theta=args.theta,
         query_L=args.top,
         diversity=args.diversity,
-        nlparam=args.nlparam
+        nlparam=args.nlparam,
+        optimal=args.optimal,
+        naive=args.naive
     )
     # 1. pre-computation
     if not is_precomputed(args.input):
@@ -65,7 +68,7 @@ if __name__ == "__main__":
     print("\nStart online processing:")
     stat.start_timestamp = time.time()
     # 3.3. execute online processing
-    result_set = execute_online(
+    result_set, total_diversity_score = execute_online(
         data_graph=mid_data_graph,
         query_keyword_Q=[int(keyword) for keyword in args.keywords.split(",")],
         query_support_k=args.support,
@@ -79,7 +82,23 @@ if __name__ == "__main__":
     # 3.4. refine the result set
     if args.diversity:
         print("\nStart refinement")
-        result_set = execute_refine(
+        result_set, total_diversity_score = execute_refine(
+            query_L=args.top,
+            data_graph=mid_data_graph,
+            input_set=result_set,
+            stat=stat
+        )
+    elif args.optimal:
+        print("\nStart Optimal refinement")
+        result_set, total_diversity_score = execute_refine_optimal(
+            query_L=args.top,
+            data_graph=mid_data_graph,
+            input_set=result_set,
+            stat=stat
+        )
+    elif args.naive:
+        print("\nStart Naive refinement")
+        result_set, total_diversity_score = execute_refine_without_pruning(
             query_L=args.top,
             data_graph=mid_data_graph,
             input_set=result_set,
@@ -88,6 +107,7 @@ if __name__ == "__main__":
     stat.finish_timestamp = time.time()
     stat.leaf_node_counter = count_leaf_node(index_root)
     stat.solver_result = list(result_set)
+    stat.total_score = total_diversity_score
     for result in result_set:
         print(result[0], "with score:", result[1])
     # 4. save result set and statistic file

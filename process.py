@@ -70,7 +70,7 @@ def execute_online(
     nlparam: int,
     index_root: list,
     stat: Statistics
-) -> list:
+) -> (set, int):
     # 0. initialization:
     # 0.1 hash the query keywords set Q
     q_bv = 0
@@ -180,10 +180,12 @@ def execute_online(
     print("Max score cost:", max_influential_score_cost)
 
     # print(data_graph.nodes(data=True))
+    sum_influential_score = 0
     for seed_community in result_set_S:
         print(seed_community[0].nodes)
+        sum_influential_score += seed_community[1]
 
-    return result_set_S
+    return result_set_S, sum_influential_score
 
 
 # Index Node:

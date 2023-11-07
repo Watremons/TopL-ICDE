@@ -20,7 +20,7 @@ def compute_diversity_score_increment(data_graph: nx.Graph, influenced_community
     return delta_diversity_score
 
 
-def compute_diversity_score(data_graph: nx.Graph, influenced_community: nx.Graph):
+def update_diversity_score_for_graph(data_graph: nx.Graph, influenced_community: nx.Graph) -> nx.Graph:
     for influenced_node in influenced_community.nodes(data=True):
         if "max_influential_score" not in data_graph.nodes[influenced_node[0]] or data_graph.nodes[influenced_node[0]]["max_influential_score"] < influenced_node[1]["influential_score"]:
             data_graph.nodes[influenced_node[0]]["max_influential_score"] = influenced_node[1]["influential_score"]
@@ -46,7 +46,7 @@ def execute_refine(
     data_graph: nx.Graph,
     input_set: set,
     stat: Statistics
-) -> list:
+) -> (set, int):
     # 0.1. initialize the max heap
     max_increment_entry_heap = []
     for candidate in input_set:
@@ -61,7 +61,9 @@ def execute_refine(
     # 0.2. initialize the round count and result set
     result_set = set()
     round_count = 0
+    total_diversity_score = 0
     temp_data_graph = data_graph.copy(as_view=False)
+    # 1. loop to get top L
     while len(result_set) < query_L and len(max_increment_entry_heap) > 0:
         for increment_entry in max_increment_entry_heap:
             print(increment_entry.key_increment, increment_entry.entity_subgraph, "[{}]".format(increment_entry.rounds))
@@ -71,8 +73,9 @@ def execute_refine(
         now_increment_entry = heapq.heappop(max_increment_entry_heap)
         stat.select_greatest_increment_entry_time += (time.time() - start_timestamp)
         if now_increment_entry.rounds == round_count:
+            total_diversity_score += -1*now_increment_entry.key_increment
             result_set.add((now_increment_entry.entity_subgraph, -1*now_increment_entry.key_increment, now_increment_entry.influenced_community))  # (seed_community_g, diversity_g)
-            temp_data_graph = compute_diversity_score(
+            temp_data_graph = update_diversity_score_for_graph(
                 data_graph=temp_data_graph,
                 influenced_community=now_increment_entry.influenced_community
             )
@@ -95,4 +98,4 @@ def execute_refine(
                 )
             )
 
-    return result_set
+    return result_set, total_diversity_score
