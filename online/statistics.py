@@ -20,6 +20,8 @@ class Statistics:
         self,
         input_file_folder: str,
         diversity: bool,
+        optimal: bool,
+        naive: bool,
         query_keyword_Q: list,
         query_support_k: int,
         radius_r: int,
@@ -37,6 +39,7 @@ class Statistics:
         self.output_stat_file_name = os.path.join(input_file_folder, "statistics.txt")
 
         self.solver_result = []
+        self.total_score = 0
         distribution = "uniform"
         input_info = input_file_folder.split('/')[-1].split('-')
         if len(input_info) < 2:
@@ -47,7 +50,15 @@ class Statistics:
         self.all_keywords_num = input_info[-2]
         self.keywords_per_vertex = input_info[-1]
         self.distribution = distribution
-        self.diversity = diversity
+        self.refine_type = "No Refine"
+        if diversity:
+            self.refine_type = "Diversity"
+        elif optimal:
+            self.refine_type = "Optimal"
+        elif naive:
+            self.refine_type = "Naive"
+        else:
+            self.refine_type = "No Refine"
         self.query_keyword_Q = query_keyword_Q
         self.query_support_k = query_support_k
         self.radius_r = radius_r
@@ -89,6 +100,7 @@ class Statistics:
         result += "\n"
         result += "-------------SOLVER INFO-------------\n"
         result += "Result: {}\n".format([result[1] for result in self.solver_result])
+        result += "Total Score: {}\n".format(self.total_score)
         result += "Total Nodes: {}\n".format(self.node_num)
         result += "Total Edges: {}\n".format(self.edge_num)
         result += "All Keywords: {}\n".format(self.all_keywords_num)
@@ -109,7 +121,7 @@ class Statistics:
         result += "Pruning Leaf Nodes: {}\n".format(self.leaf_node_counter - self.leaf_node_visit_counter)
         result += "\n"
         result += "-------------REFINE INFO-------------\n"
-        result += "Refine Type: {}\n".format("Diversity" if self.diversity else "Naive")
+        result += "Refine Type: {}\n".format(self.refine_type)
         result += "Query n: {}\n".format(self.nlparam)
         result += "-------------TIME INFO-------------\n"
         result += "Started at: {} \tFinished at: {}\n".format(self.start_timestamp, self.finish_timestamp)
