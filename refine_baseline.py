@@ -70,15 +70,15 @@ def execute_refine_without_pruning(
             influenced_community=now_increment_entry.influenced_community
         )
         # 1.3. update the increment of candidate
-        for idx, (_, _, influenced_community_g_inf) in max_increment_entry_heap:
+        for idx, now_increment_entry in enumerate(max_increment_entry_heap):
             start_timestamp = time.time()
             delta_diversity_score = compute_diversity_score_increment(
                 data_graph=temp_data_graph,
-                influenced_community_g_inf=influenced_community_g_inf,
+                influenced_community_g_inf=now_increment_entry.influenced_community,
             )
             stat.refinement_increment_compute_time += (time.time() - start_timestamp)
             stat.refinement_increment_compute_count += 1
-            max_increment_entry_heap[idx][1] = -1*delta_diversity_score
+            max_increment_entry_heap[idx].key_increment = -1*delta_diversity_score
         # 1.4. resort the heap
         heapq.heapify(max_increment_entry_heap)
     return result_set, total_diversity_score
@@ -95,7 +95,9 @@ def execute_refine_optimal(
     result_set = set()
     max_diversity_score = 0
     # 1. iterate the possible combinations
-    for possible_result_set in possible_combinations:
+    for idx, possible_result_set in enumerate(possible_combinations):
+        if (idx+1) % 1000 == 0:
+            print("Optimal result compuing", idx+1, "in", len(possible_combinations))
         # 1.1. iterate the possible combinations
         now_diversity_score = 0
         now_result_set = set()
