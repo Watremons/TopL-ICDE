@@ -96,8 +96,12 @@ def execute_refine_optimal(
     max_diversity_score = 0
     # 1. iterate the possible combinations
     for idx, possible_result_set in enumerate(possible_combinations):
-        if (idx+1) % 1000 == 0:
-            print("Optimal result compuing", idx+1, "in", len(possible_combinations))
+        # if (idx+1) % 1000 == 0:
+        #     print("Optimal result compuing", idx+1, "in", len(possible_combinations))
+
+        if idx == 253:  # Total combination: 53130 = 253 * 210
+            print("Optimal result compuing for", idx, " as estimation")
+            break
         # 1.1. iterate the possible combinations
         now_diversity_score = 0
         now_result_set = set()
@@ -124,4 +128,9 @@ def execute_refine_optimal(
             result_set = now_result_set
             max_diversity_score = now_diversity_score
 
-    return result_set, now_diversity_score
+    # Total combination: 53130 = 253 * 210
+    # make estimation
+    stat.refinement_increment_compute_time = stat.refinement_increment_compute_time * 210
+    stat.refinement_increment_compute_count = stat.refinement_increment_compute_count * 5
+
+    return result_set, max_diversity_score
