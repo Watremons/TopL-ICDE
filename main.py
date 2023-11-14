@@ -79,6 +79,9 @@ if __name__ == "__main__":
         index_root=index_root,
         stat=stat
     )
+    stat.obtainment_time = time.time() - stat.start_timestamp
+
+    start_timestamp = time.time()
     # 3.4. refine the result set
     if args.diversity:
         print("\nStart refinement")
@@ -104,6 +107,7 @@ if __name__ == "__main__":
             input_set=result_set,
             stat=stat
         )
+    stat.refinement_time = time.time() - start_timestamp
     stat.finish_timestamp = time.time()
     stat.leaf_node_counter = count_leaf_node(index_root)
     stat.solver_result = list(result_set)

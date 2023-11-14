@@ -62,8 +62,12 @@ def execute_refine(
     result_set = set()
     round_count = 0
     total_diversity_score = 0
+
+    start_timestamp = time.time()
     temp_data_graph = data_graph.copy(as_view=False)
-    stat.refinement_increment_compute_count = 1
+    stat.refinement_grah_copy_time += (time.time() - start_timestamp)
+
+    stat.refinement_increment_compute_counter = 1
     # 1. loop to get top L
     while len(result_set) < query_L and len(max_increment_entry_heap) > 0:
         for increment_entry in max_increment_entry_heap:
@@ -76,10 +80,14 @@ def execute_refine(
         if now_increment_entry.rounds == round_count:
             total_diversity_score += -1*now_increment_entry.key_increment
             result_set.add((now_increment_entry.entity_subgraph, -1*now_increment_entry.key_increment, now_increment_entry.influenced_community))  # (seed_community_g, diversity_g)
+
+            start_timestamp = time.time()
             temp_data_graph = update_diversity_score_for_graph(
                 data_graph=temp_data_graph,
                 influenced_community=now_increment_entry.influenced_community
             )
+            stat.refinement_graph_update_time += (time.time() - start_timestamp)
+
             round_count += 1
         else:
             start_timestamp = time.time()
@@ -88,7 +96,7 @@ def execute_refine(
                 influenced_community_g_inf=now_increment_entry.influenced_community,
             )
             stat.refinement_increment_compute_time += (time.time() - start_timestamp)
-            stat.refinement_increment_compute_count += 1
+            stat.refinement_increment_compute_counter += 1
             heapq.heappush(
                 max_increment_entry_heap,
                 IncrementEntry(

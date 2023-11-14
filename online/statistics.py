@@ -76,14 +76,21 @@ class Statistics:
         self.compute_k_truss_time = 0
         self.compute_influential_score_time = 0
         self.modify_result_set_time = 0
+        self.obtainment_time = 0
+        self.refinement_time = 0
+
         self.select_greatest_increment_entry_time = 0
         self.refinement_increment_compute_time = 0
-        self.refinement_increment_compute_count = 0
+        self.refinement_increment_compute_counter = 0
+        self.refinement_graph_update_time = 0
+        self.refinement_grah_copy_time = 0
 
         self.vertex_pruning_counter = 0
         self.entry_pruning_counter = 0
         self.leaf_node_counter = 0
         self.leaf_node_visit_counter = 0
+
+        self.optimal_sampling_ratio = 1
 
     def generate_stat_result(self) -> str:
         """
@@ -126,6 +133,9 @@ class Statistics:
         result += "-------------TIME INFO-------------\n"
         result += "Started at: {} \tFinished at: {}\n".format(self.start_timestamp, self.finish_timestamp)
         result += "Total time: {}\n".format(self.finish_timestamp - self.start_timestamp)
+        result += "Obtainment time: {}\n".format(self.obtainment_time)
+        result += "Refinement time: {}\n".format(self.refinement_time)
+        result += "-------------OBTAIN TIME INFO-------------\n"
         result += "Select Greatest Entry in Heap time: {}\n".format(self.select_greatest_entry_in_H_time)
         result += "Leaf Node Traverse time: {}\n".format(self.leaf_node_traverse_time)
         result += "NonLeaf Node Traverse time: {}\n".format(self.nonleaf_node_traverse_time)
@@ -133,6 +143,10 @@ class Statistics:
         result += "Compute K-Truss time: {}\n".format(self.compute_k_truss_time)
         result += "Compute Influential Score time: {}\n".format(self.compute_influential_score_time)
         result += "Modify Result Set time: {}\n".format(self.modify_result_set_time)
+        result += "-------------REFINE TIME INFO-------------\n"
         result += "Select Greatest Increment Entry in Heap time: {}\n".format(self.select_greatest_increment_entry_time)
-        result += "Refinement Increment Compute Time: {} for {} times\n".format(self.refinement_increment_compute_time, self.refinement_increment_compute_count)
+        result += "Refinement Increment Compute Time: {} for {} times\n".format(self.refinement_increment_compute_time, self.refinement_increment_compute_counter)
+        result += "Optimal Sampling Ratio: {}\n".format(self.optimal_sampling_ratio)
+        result += "Refinement Graph Update Time: {}\n".format(self.refinement_graph_update_time)
+        result += "Refinement Graph Copy Time: {}\n".format(self.refinement_grah_copy_time)
         return result
