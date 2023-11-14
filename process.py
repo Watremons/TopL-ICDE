@@ -182,7 +182,7 @@ def execute_online(
     # print(data_graph.nodes(data=True))
     sum_influential_score = 0
     for seed_community in result_set_S:
-        print(seed_community[0].nodes)
+        # print(seed_community[0].nodes)
         sum_influential_score += seed_community[1]
 
     return result_set_S, sum_influential_score
