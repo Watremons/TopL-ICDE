@@ -122,7 +122,7 @@ def statistic_file_save(stat, dataset_path: str) -> bool:
     result_stat_file = open(os.path.join(base_path, dataset_path, stat_file), 'w')
     result_stat_file.write(stat.generate_stat_result())
     result_stat_file.close()
-    print(stat.output_stat_file_name, "saved successfully!")
+    print(stat.output_stat_file_name, "saved successfully!\n")
     return True
 
 
