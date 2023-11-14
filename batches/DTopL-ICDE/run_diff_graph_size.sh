@@ -1,6 +1,6 @@
 cd /home/yons/projects/influential-community-detection/
 
-conda activate topLICD
+conda activate toplicde
 
 for ((i=0;i<15;i++))
 do
