@@ -63,6 +63,7 @@ def execute_refine(
     round_count = 0
     total_diversity_score = 0
     temp_data_graph = data_graph.copy(as_view=False)
+    stat.refinement_increment_compute_count = 1
     # 1. loop to get top L
     while len(result_set) < query_L and len(max_increment_entry_heap) > 0:
         for increment_entry in max_increment_entry_heap:
