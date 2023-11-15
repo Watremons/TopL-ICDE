@@ -5,6 +5,7 @@ from utils.ioutils import data_graph_read, mid_graph_save, index_save, mid_graph
 from online.statistics import Statistics
 from precompute import execute_offline, construct_index
 from process import execute_online
+from process_optimal import execute_online_optimal
 from refine import execute_refine
 from refine_baseline import execute_refine_optimal, execute_refine_without_pruning
 
@@ -68,18 +69,29 @@ if __name__ == "__main__":
     print("\nStart online processing:")
     stat.start_timestamp = time.time()
     # 3.3. execute online processing
-    result_set, total_diversity_score = execute_online(
-        data_graph=mid_data_graph,
-        query_keyword_Q=[int(keyword) for keyword in args.keywords.split(",")],
-        query_support_k=args.support,
-        radius_r=args.radius,
-        threshold_theta=args.theta,
-        query_L=args.top,
-        nlparam=args.nlparam,
-        index_root=index_root,
-        optimal_mode=args.optimal,
-        stat=stat
-    )
+    if args.optimal:
+        result_set, total_diversity_score = execute_online_optimal(
+            data_graph=mid_data_graph,
+            query_keyword_Q=[int(keyword) for keyword in args.keywords.split(",")],
+            query_support_k=args.support,
+            radius_r=args.radius,
+            threshold_theta=args.theta,
+            index_root=index_root,
+            stat=stat
+        )
+    else:
+
+        result_set, total_diversity_score = execute_online(
+            data_graph=mid_data_graph,
+            query_keyword_Q=[int(keyword) for keyword in args.keywords.split(",")],
+            query_support_k=args.support,
+            radius_r=args.radius,
+            threshold_theta=args.theta,
+            query_L=args.top,
+            nlparam=args.nlparam,
+            index_root=index_root,
+            stat=stat
+        )
     stat.obtainment_time = time.time() - stat.start_timestamp
 
     start_timestamp = time.time()
