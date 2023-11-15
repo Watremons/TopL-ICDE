@@ -97,7 +97,7 @@ def execute_refine_optimal(
 ) -> (set, int):
     # 0. generate all possible combinations
     possible_combinations = [c for c in combinations(input_set, query_L)]
-
+    optimal_sampling_ratio = len(possible_combinations) / 100
     # total_start_timestamp = time.time()
     # total_time = 0
 
@@ -108,7 +108,7 @@ def execute_refine_optimal(
         # if (idx+1) % 1000 == 0:
         #     print("Optimal result compuing", idx+1, "in", len(possible_combinations))
 
-        if idx == 253:  # Total combination: 53130 = 253 * 210
+        if idx == 100:  # Total combination: 53130 = 253 * 210
             print("Optimal result compuing for", idx, " as estimation\n")
             break
         # 1.1. iterate the possible combinations
@@ -153,6 +153,6 @@ def execute_refine_optimal(
     # Total combination: 53130 = 253 * 210
     # make estimation
     # print("compute time:", stat.refinement_increment_compute_time, "for", stat.refinement_increment_compute_counter)
-    stat.optimal_sampling_ratio = 210
+    stat.optimal_sampling_ratio = optimal_sampling_ratio
 
     return result_set, max_diversity_score

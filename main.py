@@ -77,6 +77,7 @@ if __name__ == "__main__":
         query_L=args.top,
         nlparam=args.nlparam,
         index_root=index_root,
+        optimal_mode=args.optimal,
         stat=stat
     )
     stat.obtainment_time = time.time() - stat.start_timestamp

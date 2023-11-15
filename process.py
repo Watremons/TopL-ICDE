@@ -12,7 +12,7 @@ R_MAX = 2
 PRE_THETA_LIST = [0.2]
 
 
-def is_pass_pruning_entry(entry: dict, radius: int, query_bv: int, query_support: int, theta_z: float, sigma_L: float):
+def is_pass_pruning_entry(entry: dict, radius: int, query_bv: int, query_support: int, theta_z: float, sigma_L: float, optimal_mode: bool):
     # {
     #     "P": index_node,
     #     "R": [{
@@ -28,8 +28,9 @@ def is_pass_pruning_entry(entry: dict, radius: int, query_bv: int, query_support
         return False
     if synopsis["ub_sup_r"] < query_support:  # (Index-Level) Support Pruning
         return False
-    if synopsis["Inf_ub"][str(theta_z)] < sigma_L:  # (Index-Level) Influential Score Pruning
-        return False
+    if optimal_mode:
+        if synopsis["Inf_ub"][str(theta_z)] < sigma_L:  # (Index-Level) Influential Score Pruning
+            return False
     return True
 
 
@@ -69,6 +70,7 @@ def execute_online(
     query_L: int,
     nlparam: int,
     index_root: list,
+    optimal_mode: bool,
     stat: Statistics
 ) -> (set, int):
     # 0. initialization:
@@ -113,7 +115,7 @@ def execute_online(
         for child_entry in now_entry.index_N['P']:
             if child_entry['T']:  # N is a leaf node with child entry made by vertex
                 leaf_node_start_timestamp = time.time()
-                if is_pass_pruning_entry(entry=child_entry, radius=radius_r_idx, query_bv=q_bv, query_support=query_support_k-2, theta_z=theta_z, sigma_L=sigma_L):  # check the community-level pruning
+                if is_pass_pruning_entry(entry=child_entry, radius=radius_r_idx, query_bv=q_bv, query_support=query_support_k-2, theta_z=theta_z, sigma_L=sigma_L, optimal_mode=optimal_mode):  # check the community-level pruning
                     compute_r_hop_start_timestamp = time.time()
                     # hop_v_i_r = nx.ego_graph(G=data_graph, n=child_entry["P"], radius=radius_r, center=True)
                     hop_v_i_r = compute_hop_v_r(graph=data_graph, node_v=child_entry["P"], radius=radius_r)
@@ -164,7 +166,7 @@ def execute_online(
                 stat.leaf_node_traverse_time += (time.time() - leaf_node_start_timestamp)
             else:  # N is non-leaf node with child entry made by index node
                 nonleaf_node_start_timestamp = time.time()
-                if is_pass_pruning_entry(entry=child_entry, radius=radius_r_idx, query_bv=q_bv, query_support=query_support_k-2, theta_z=theta_z, sigma_L=sigma_L):  # check the community-level pruning
+                if is_pass_pruning_entry(entry=child_entry, radius=radius_r_idx, query_bv=q_bv, query_support=query_support_k-2, theta_z=theta_z, sigma_L=sigma_L, optimal_mode=optimal_mode):  # check the community-level pruning
                     heapq.heappush(max_heap_H, IndexEntry((-1)*child_entry["R"][radius_r_idx]["Inf_ub"][str(theta_z)], child_entry, idx))
                     if len(child_entry["P"]) == 0 or child_entry["P"][0]["T"]:
                         leaf_node_visit_counter += 1
