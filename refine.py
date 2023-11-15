@@ -70,9 +70,9 @@ def execute_refine(
     stat.refinement_increment_compute_counter = 1
     # 1. loop to get top L
     while len(result_set) < query_L and len(max_increment_entry_heap) > 0:
-        for increment_entry in max_increment_entry_heap:
-            print(increment_entry.key_increment, increment_entry.entity_subgraph, "[{}]".format(increment_entry.rounds))
-        print("\n")
+        # for increment_entry in max_increment_entry_heap:
+        #     print(increment_entry.key_increment, increment_entry.entity_subgraph, "[{}]".format(increment_entry.rounds))
+        # print("\n")
 
         start_timestamp = time.time()
         now_increment_entry = heapq.heappop(max_increment_entry_heap)
