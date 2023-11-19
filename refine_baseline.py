@@ -1,5 +1,6 @@
 import heapq
 import time
+import math
 from itertools import combinations
 import networkx as nx
 
@@ -96,10 +97,22 @@ def execute_refine_optimal(
     stat: Statistics
 ) -> (set, int):
     # 0. generate all possible combinations
-    possible_combinations = [c for c in combinations(input_set, query_L)]
-    optimal_sampling_ratio = len(possible_combinations) / 100
-    # total_start_timestamp = time.time()
-    # total_time = 0
+    print("input set size is: ", len(input_set))
+    possible_combinations_length = math.comb(len(input_set), query_L)
+    optimal_sampling_ratio = 1
+
+    # straight forward
+    # possible_combinations = [c for c in combinations(input_set, query_L)]
+
+    #  Sampling method
+    optimal_sampling_ratio = possible_combinations_length / 100
+    input_subset = set()
+    for idx, element in enumerate(input_set):
+        if idx == 10:
+            break
+        input_subset.add(element)
+    sampling_possible_combinations = [c for c in combinations(input_subset, query_L)]
+    possible_combinations = sampling_possible_combinations
 
     result_set = set()
     max_diversity_score = 0
@@ -108,7 +121,7 @@ def execute_refine_optimal(
         # if (idx+1) % 1000 == 0:
         #     print("Optimal result compuing", idx+1, "in", len(possible_combinations))
 
-        if idx == 100:  # Total combination: 53130 = 253 * 210
+        if idx == 100:
             print("Optimal result compuing for", idx, " as estimation\n")
             break
         # 1.1. iterate the possible combinations
