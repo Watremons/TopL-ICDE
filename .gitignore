@@ -129,8 +129,6 @@ dmypy.json
 .pyre/
 
 # Dataset
-/dataset
 /result
-/dataset-5
-/dataset-cut
-/dataset_backup
+/batches
+statistics-*.txt
