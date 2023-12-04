@@ -131,4 +131,5 @@ dmypy.json
 # Dataset
 /result
 /batches
+/batches/
 statistics-*.txt
