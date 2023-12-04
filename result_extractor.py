@@ -9,7 +9,7 @@ if __name__ == "__main__":
     # 250000-768545-20-3
     # 500000-1616753-20-3
     # 1000000-3500118-20-3
-    folder_path = os.path.join(folder_path, "diff_type", "334863-925872-20-3")
+    folder_path = os.path.join(folder_path, "diff_type", "317080-1049866-20-3")
     print("------{}------".format(folder_path))
 
     uni_result_list = []
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     for file_name in uni_file_list:
         file_path = os.path.join(folder_path, file_name)
         if os.path.splitext(file_path)[-1] == ".txt":
-            param_type = "Unknown"
+            refine_type = "Unknown"
             obtain_time = 0
             refine_time = 0
             sampling_ratio = 1
@@ -31,7 +31,7 @@ if __name__ == "__main__":
                 lines = file_obj.readlines()
             for line in lines:
                 if line.startswith("Refine Type:"):
-                    param_type = line.rstrip().split(' ')[2]
+                    refine_type = line.rstrip().split(' ')[2]
                 if line.startswith("Obtainment time:"):
                     obtain_time = line.rstrip().split(' ')[2]
                 if line.startswith("Refinement Increment Compute Time:"):
@@ -39,20 +39,20 @@ if __name__ == "__main__":
                 if line.startswith("Optimal Sampling Ratio:"):
                     sampling_ratio = line.rstrip().split(' ')[3]
             refine_time = float(refine_time) * (float(sampling_ratio) if float(sampling_ratio) > 1 else 1)
-            uni_result_list.append([param_type, obtain_time, refine_time])
+            uni_result_list.append([refine_type, obtain_time, refine_time])
 
     # for file_name in gau_file_list:
     #     file_path = os.path.join(folder_path, "gauss", file_name)
     #     if os.path.splitext(file_path)[-1] == ".txt":
-    #         param_type = "Unknown"
+    #         total_score = "Unknown"
     #         obtain_time = 0
     #         refine_time = 0
     #         sampling_ratio = 1
     #         with open(file_path, encoding='utf-8') as file_obj:
     #             lines = file_obj.readlines()
     #         for line in lines:
-    #             if line.startswith("Refine Type:"):
-    #                 param_type = line.rstrip().split(' ')[2]
+    #             if line.startswith("Total Score:"):
+    #                 total_score = line.rstrip().split(' ')[2]
     #             if line.startswith("Obtainment time:"):
     #                 obtain_time = line.rstrip().split(' ')[2]
     #             if line.startswith("Refinement Increment Compute Time:"):
@@ -60,20 +60,20 @@ if __name__ == "__main__":
     #             if line.startswith("Optimal Sampling Ratio:"):
     #                 sampling_ratio = line.rstrip().split(' ')[3]
     #         refine_time = float(refine_time) * (float(sampling_ratio) if float(sampling_ratio) > 1 else 1)
-    #         gau_result_list.append([param_type, obtain_time, refine_time])
+    #         gau_result_list.append([total_score, obtain_time, refine_time])
 
     # for file_name in zipf_file_list:
     #     file_path = os.path.join(folder_path, "zipf", file_name)
     #     if os.path.splitext(file_path)[-1] == ".txt":
-    #         param_type = "Unknown"
+    #         total_score = "Unknown"
     #         obtain_time = 0
     #         refine_time = 0
     #         sampling_ratio = 1
     #         with open(file_path, encoding='utf-8') as file_obj:
     #             lines = file_obj.readlines()
     #         for line in lines:
-    #             if line.startswith("Refine Type:"):
-    #                 param_type = line.rstrip().split(' ')[2]
+    #             if line.startswith("Total Score:"):
+    #                 total_score = line.rstrip().split(' ')[2]
     #             if line.startswith("Obtainment time:"):
     #                 obtain_time = line.rstrip().split(' ')[2]
     #             if line.startswith("Refinement Increment Compute Time:"):
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     #             if line.startswith("Optimal Sampling Ratio:"):
     #                 sampling_ratio = line.rstrip().split(' ')[3]
     #         refine_time = float(refine_time) * (float(sampling_ratio) if float(sampling_ratio) > 1 else 1)
-    #         zipf_result_list.append([param_type, obtain_time, refine_time])
+    #         zipf_result_list.append([total_score, obtain_time, refine_time])
 
     print("uni")
     for uni_result in uni_result_list:
