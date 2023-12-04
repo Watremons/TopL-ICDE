@@ -1,0 +1,4 @@
+networkx @ file:///croot/networkx_1678964333703/work
+numpy @ file:///home/conda/feedstock_root/build_artifacts/numpy_1694920014183/work/dist/numpy-1.26.0-cp311-cp311-linux_x86_64.whl#sha256=7b731396a94ca030092abedab0dd12ee8e5d9900f4ad9116c7427a88837ab787
+PyMetis @ file:///home/conda/feedstock_root/build_artifacts/pymetis_1695747932309/work
+scipy @ file:///home/conda/feedstock_root/build_artifacts/scipy-split_1696467621138/work/dist/scipy-1.11.3-cp311-cp311-linux_x86_64.whl#sha256=b226522707b433941a1f15e1b3bb2751e63c9f9c13ca4f89a5e523eb321433d1
