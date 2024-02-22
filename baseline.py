@@ -65,6 +65,10 @@ if __name__ == "__main__":
         radius_r=args.radius,
         threshold_theta=args.theta,
         query_L=args.top,
+        diversity=False,
+        optimal=False,
+        naive=False,
+        nlparam=0
     )
     print("Start file read:")
     data_graph = data_graph_read(args.input)
