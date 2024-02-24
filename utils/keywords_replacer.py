@@ -17,7 +17,7 @@ def replace_keywords(dataset: str, distribution: str):
     edge_num = int(edge_num)
     all_keywords_num = int(all_keywords_num)
     per_vertex_keyword = int(per_vertex_keyword)
-    base_path = os.path.abspath(os.path.dirname(__file__))
+    base_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
     input_file_path = os.path.join(base_path, "dataset", "manual", dataset, 'data_graph.gpickle.gz')
     # Load graph
     target_graph = nx.read_gpickle(input_file_path)
