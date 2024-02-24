@@ -2,6 +2,22 @@ import heapq
 import networkx as nx
 
 
+def dict_add(to_do_dict: dict, add_key: int, add_value: tuple):
+    if add_key not in to_do_dict:
+        to_do_dict[add_key] = [add_value]
+    else:
+        to_do_dict[add_key].append(add_value)
+
+
+def sort_edges_by_ub_sup(graph: nx.Graph) -> dict:
+    edge_dict = dict()
+    for edge in graph.edges.data():
+        now_edge_tuple = (edge[0], edge[1])
+        now_ub_sup = edge[2]['ub_sup']
+        dict_add(to_do_dict=edge_dict, add_key=now_ub_sup, add_value=now_edge_tuple)
+    return edge_dict
+
+
 # Compute hop(v,r)
 def compute_hop_v_r(graph: nx.Graph, node_v: int, radius: int) -> nx.Graph:
     nodes_in_hop = []

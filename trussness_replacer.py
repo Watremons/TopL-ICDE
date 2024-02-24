@@ -3,24 +3,10 @@ import random
 import numpy as np
 import networkx as nx
 
+from utils.graphutils import dict_add, sort_edges_by_ub_sup
+
 
 R_MAX = 2
-
-
-def dict_add(to_do_dict: dict, add_key: int, add_value: tuple):
-    if add_key not in to_do_dict:
-        to_do_dict[add_key] = [add_value]
-    else:
-        to_do_dict[add_key].append(add_value)
-
-
-def sort_edges_by_ub_sup(graph: nx.Graph) -> dict:
-    edge_dict = dict()
-    for edge in graph.edges.data():
-        now_edge_tuple = (edge[0], edge[1])
-        now_ub_sup = edge[2]['ub_sup']
-        dict_add(to_do_dict=edge_dict, add_key=now_ub_sup, add_value=now_edge_tuple)
-    return edge_dict
 
 
 def truss_decompose(graph: nx.Graph) -> nx.Graph:
@@ -88,13 +74,14 @@ def truss_decompose(graph: nx.Graph) -> nx.Graph:
 
 
 def recompute_ub_sup_r_in_synopsis(node_index: int, data_graph: nx.Graph):
-    for r in range(R_MAX):  # [1, r_max]
-        # 3.0. compute hop(v_i, r)
-        hop_v_r = nx.ego_graph(G=data_graph, n=node_index, radius=r+1, center=True)
-        # 3.2. compute ub_sup_r = max support of all edges in hop(v_i, r)
-        for (u, v) in hop_v_r.edges:
-            if u > v and hop_v_r.edges[u, v]["ub_sup"] > data_graph.nodes[node_index]["R"][r]["ub_sup_r"]:
-                data_graph.nodes[node_index]["R"][r]["ub_sup_r"] = hop_v_r.edges[u, v]["ub_sup"]
+    # 3.0. compute hop(v_i, r)
+    neighbors_set = data_graph.neighbors(node_index)
+    # 3.2. compute ub_sup_r = max support of all edges in hop(v_i, r)
+    if "ub_sup_r" not in data_graph.nodes[node_index]:
+        data_graph.nodes[node_index]["ub_sup_r"] = 0
+    for neighbor in neighbors_set:
+        if data_graph.edges[node_index, neighbor]["ub_sup"] > data_graph.nodes[node_index]["ub_sup_r"]:
+            data_graph.nodes[node_index]["ub_sup_r"] = data_graph.edges[node_index, neighbor]["ub_sup"]
 
 
 def replace_ub_sup(dataset: str):
@@ -135,22 +122,22 @@ if __name__ == "__main__":
     #     dataset=os.path.join("manual", dataset)
     # )
 
-    # dataset = os.path.join("50000-145648-20-3", "gauss")
-    # replace_ub_sup(
-    #     dataset=os.path.join("manual", dataset)
-    # )
+    dataset = os.path.join("50000-145648-20-3", "gauss")
+    replace_ub_sup(
+        dataset=os.path.join("manual", dataset)
+    )
 
-    # dataset = os.path.join("50000-145648-20-3", "zipf")
-    # replace_ub_sup(
-    #     dataset=os.path.join("manual", dataset)
-    # )
+    dataset = os.path.join("50000-145648-20-3", "zipf")
+    replace_ub_sup(
+        dataset=os.path.join("manual", dataset)
+    )
 
     dataset = os.path.join("amazon", "334863-925872-20-3")
     replace_ub_sup(
         dataset=os.path.join("realworld", dataset)
     )
 
-    # dataset = os.path.join("dblp_simple", "317080-1049866-1000-3")
-    # replace_ub_sup(
-    #     dataset=os.path.join("realworld", dataset)
-    # )
+    dataset = os.path.join("dblp_simple", "317080-1049866-1000-3")
+    replace_ub_sup(
+        dataset=os.path.join("realworld", dataset)
+    )
