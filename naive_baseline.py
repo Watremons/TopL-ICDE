@@ -38,7 +38,7 @@ def execute_baseline(
         # 3. check the keywords
         flag = True
         for node in seed_community_g.nodes(data=True):
-            if set(node[1]["keywords"]) & set(query_keyword_Q) == 0:
+            if len(set(node[1]["keywords"]) & set(query_keyword_Q)) == 0:
                 flag = False
                 break
         if not flag:
