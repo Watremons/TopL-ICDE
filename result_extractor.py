@@ -13,6 +13,8 @@ if __name__ == "__main__":
     # 334863-925872-20-3
     # 317080-1049866-20-3
     folder_path = os.path.join(folder_path, "manual", "50000-145648-20-3")
+    # folder_path = os.path.join(folder_path, "realworld", "dblp_new", "317080-1049866-20-3")
+    # folder_path = os.path.join(folder_path, "realworld", "amazon", "334863-925872-20-3")
     print("------{}------".format(folder_path))
 
     uni_result_list = []
