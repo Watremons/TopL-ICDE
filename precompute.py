@@ -59,7 +59,7 @@ def compute_synopsis(node_index: int, data_graph: nx.Graph):
         # 3.2. compute ub_sup_r = max support of all edges in hop(v_i, r)
         # starttime = time.time()
         for (u, v) in hop_v_r.edges:
-            if u > v and hop_v_r.edges[u, v]["ub_sup"] > data_graph.nodes[node_index]["R"][r]["ub_sup_r"]:
+            if hop_v_r.edges[u, v]["ub_sup"] > data_graph.nodes[node_index]["R"][r]["ub_sup_r"]:
                 data_graph.nodes[node_index]["R"][r]["ub_sup_r"] = hop_v_r.edges[u, v]["ub_sup"]
         # print("compute ub_sup_r", time.time()-starttime)
         # 3.3 compute influential score of hop(v_i,r) for each theta
