@@ -21,7 +21,7 @@ pip install -r requirements.txt
 
 Our input data is `*.gpickle.gz` format, which is packed by `nx.write_gpickle()`.
 
-The input data in gz file can be read by `nx.readwrite.read_gpickle()` as a `nx.Graph`.
+The input data in gz file can be read by `nx.readwrite.read_gpickle()` as a `nx.Graph`, which is implemented in the form of an adjacency list.
 
 You can process the graph by the function in package `networkx`.
 
