@@ -6,7 +6,7 @@ influential-community-detection
 
 Python 3.11.5
 
-## 1. install
+## 1. Install
 
 ```bash
 pip install pymetis
@@ -17,7 +17,15 @@ pip install numpy
 pip install -r requirements.txt
 ```
 
-## 2. Usage
+## 2. Input Data Format
+
+Our input data is `*.gpickle.gz` format, which is packed by `nx.write_gpickle()`.
+
+The input data in gz file can be read by `nx.readwrite.read_gpickle()` as a `nx.Graph`.
+
+You can process the graph by the function in package `networkx`.
+
+## 3. Usage
 
 ```bash
 usage: main.py [-h] -i INPUT -Q KEYWORDS -k SUPPORT -r RADIUS -t THETA -L TOP [-d] [-n NLPARAM] [-o] [-N]
