@@ -1,6 +1,6 @@
 # influential-community-detection
 
-influential-community-detection
+Source code of "Top-L Most Influential Community Detection Over Social Networks", accepted by ICDE'24 - By Nan Zhang; Yutong Ye; Xiang Lian and Mingsong Chen.
 
 ## 0. enviroment
 
